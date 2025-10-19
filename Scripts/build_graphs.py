@@ -51,7 +51,7 @@ def monthly_llm_ratio_graph(language: str) -> tuple[list[int], list[int]]:
     """Collect the proportion of LLM-related project by month"""
     llm_projects = {}
     projects = {}
-    with open(f"Data/{language}_repo_metadata.json", "r") as f:
+    with open(f"Data/{language.lower()}_repo_metadata.json", "r") as f:
         data_dicts = json.load(f)
         for i in range(len(data_dicts)):
             month_key = datetime.fromisoformat(data_dicts[i]["created_at"]).strftime(
@@ -89,7 +89,7 @@ def monthly_llm_ratio_graph(language: str) -> tuple[list[int], list[int]]:
     plt.xticks(x, months, rotation=80)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"../Figures/{language}_llm_fraction.png")
+    plt.savefig(f"../Figures/{language.lower()}_llm_fraction.png")
 
     return projects_n, llm_projects_n
 
@@ -129,7 +129,7 @@ def popularity_llm_ratio_graph(language: str):
     """Collect the proportion of LLM-related project by number of stars"""
     projects_number = np.zeros(5)
     llm_projects_number = np.zeros(5)
-    with open(f"Data/{language}_repo_metadata.json", "r") as f:
+    with open(f"Data/{language.lower()}_repo_metadata.json", "r") as f:
         data_dicts = json.load(f)
         max_stars = max(dict["stargazers_count"] for dict in data_dicts)
         min_stars = min(dict["stargazers_count"] for dict in data_dicts)
@@ -169,6 +169,7 @@ def popularity_llm_ratio_graph(language: str):
         label="Other projects",
     )
     ax.set_ylabel("Fraction")
+    ax.set_xlabel("Number of Stars")
     ax.set_ylim(0, 1)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, rotation=80)
@@ -181,18 +182,18 @@ def popularity_llm_ratio_graph(language: str):
     )
     ax2.set_ylabel("Cumulative ratio of projects")
     ax2.legend(loc="upper right")
-    plt.title(f"{language} Ratio of LLM-ralated Projects by Number of Stars")
+    plt.title(f"Ratio of LLM-related Projects in {language} by Number of Stars")
     plt.tight_layout()
-    plt.savefig(f"../Figures/{language}_llm_fraction_stars.png")
+    plt.savefig(f"../Figures/{language.lower()}_llm_fraction_stars.png")
 
 
 if __name__ == "__main__":
-    ppn, pp_llm_n = monthly_llm_ratio_graph("python")
-    jpn, jp_llm_n = monthly_llm_ratio_graph("java")
-    cpn, cp_llm_n = monthly_llm_ratio_graph("c#")
-    jspn, jsp_llm_n = monthly_llm_ratio_graph("javascript")
+    ppn, pp_llm_n = monthly_llm_ratio_graph("Python")
+    jpn, jp_llm_n = monthly_llm_ratio_graph("Java")
+    cpn, cp_llm_n = monthly_llm_ratio_graph("C#")
+    jspn, jsp_llm_n = monthly_llm_ratio_graph("Javascript")
     gpn, gp_llm_n = monthly_llm_ratio_graph("go")
-    languages = ["python", "java", "c#", "javascript", "go"]
+    languages = ["Python", "Java", "C#", "Javascript", "Go"]
     n_repos = [np.sum(ppn), np.sum(jpn), np.sum(cpn), np.sum(jspn), np.sum(gpn)]
     n_llm_repos = [
         np.sum(pp_llm_n),
@@ -202,8 +203,8 @@ if __name__ == "__main__":
         np.sum(gp_llm_n),
     ]
     total_llm_ratio_graph(languages, n_repos, n_llm_repos)
-    popularity_llm_ratio_graph("python")
-    popularity_llm_ratio_graph("java")
-    popularity_llm_ratio_graph("c#")
-    popularity_llm_ratio_graph("javascript")
-    popularity_llm_ratio_graph("go")
+    popularity_llm_ratio_graph("Python")
+    popularity_llm_ratio_graph("Java")
+    popularity_llm_ratio_graph("C#")
+    popularity_llm_ratio_graph("Javascript")
+    popularity_llm_ratio_graph("Go")
