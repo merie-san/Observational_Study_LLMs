@@ -30,15 +30,16 @@ def repo_search(
             raise ValueError("No github token provided")
 
     # github does not display more than 1000 results
-    if repos_per_month > 100:
+    if repos_per_month > 1000:
         raise ValueError("repos per month cannot be higher than 100")
 
     # generate the necessary date objects
     date_list = []
     date_var = starting_date
-    while date_var <= ending_date:
+    while date_var < ending_date:
         date_list.append(date_var)
         date_var = date_var + relativedelta(months=1)
+    date_list.append(ending_date)
 
     # headers do not change
     headers = {
@@ -50,7 +51,7 @@ def repo_search(
     queries = []
     for i in range(len(date_list) - 1):
         queries.append(
-            f"language:{language.lower()} created:{date_list[i]}..{date_list[i + 1]} size:<10000"
+            f"language:{language.lower()} created:{date_list[i]}..{date_list[i + 1]}"
         )
 
     # build the parameter dicts
@@ -120,7 +121,7 @@ def repo_search(
                         "owner_type": (
                             item["owner"]["type"] if item.get("owner") else None
                         ),
-                        "archived": item.get("archived")
+                        "archived": item.get("archived"),
                     }
                 )
                 print(
@@ -138,8 +139,8 @@ def repo_search(
                 break
 
     # write to json file
-    with open("repo_metadata.json", "w") as f:
-        json.dump(responses, f)
+    with open(f"Data/{language.lower()}_repo_metadata.json", "w") as f:
+        json.dump(responses, f, ensure_ascii=False)
 
     return
 
