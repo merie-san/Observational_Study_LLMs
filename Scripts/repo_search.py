@@ -109,6 +109,7 @@ def repo_search(
                         "watchers_count": item.get("watchers_count"),
                         "forks_count": item.get("forks_count"),
                         "open_issues_count": item.get("open_issues_count"),
+                        "size": item.get("size")/1000, # size in MB
                         "topics": item.get("topics", []),
                         "license": (
                             item.get("license", {}).get("key")
