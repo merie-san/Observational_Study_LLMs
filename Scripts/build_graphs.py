@@ -90,6 +90,7 @@ def monthly_llm_ratio_graph(language: str) -> tuple[list[int], list[int]]:
     plt.legend()
     plt.tight_layout()
     plt.savefig(f"../Figures/{language.lower()}_llm_fraction.png")
+    plt.close()
 
     return projects_n, llm_projects_n
 
@@ -123,6 +124,7 @@ def total_llm_ratio_graph(
     plt.legend()
     plt.tight_layout()
     plt.savefig(f"../Figures/llm_fraction_languages.png")
+    plt.close()
 
 
 def llm_ratio_graph(language: str, metric: str):
@@ -154,7 +156,7 @@ def llm_ratio_graph(language: str, metric: str):
     llm_ratio = llm_projects_number / np.maximum(projects_number, 1)
     other_ratio = [1 - llm_ratio[i] for i in range(len(llm_ratio))]
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    _, ax = plt.subplots(figsize=(12, 6))
 
     ax.bar(x, llm_ratio, color="skyblue", label="LLM-related projects")
     ax.bar(
@@ -181,6 +183,117 @@ def llm_ratio_graph(language: str, metric: str):
     plt.title(f"Ratio of LLM-related Projects in {language} by {metric.capitalize()}")
     plt.tight_layout()
     plt.savefig(f"../Figures/{language.lower()}_llm_{metric}.png")
+    plt.close()
+
+
+def corr_and_fit(x, y):
+    corr = np.corrcoef(x, y)[0, 1]
+    try:
+        slope, intercept = np.polyfit(x, y, 1)
+        fit_x = np.linspace(x.min(), x.max(), 2)
+        fit_y = slope * fit_x + intercept
+    except Exception:
+        fit_x, fit_y = np.array([]), np.array([])
+    return corr, fit_x, fit_y
+
+
+def correlation_analysis(language: str, data_dir="Data", output_dir="../Figures"):
+    """
+    Correlate stargazer_count with watchers_count and forks_count,
+    and generate scatter plots with linear fit lines.
+    """
+
+    stars, open_issues, forks, size = [], [], [], []
+    with open(f"Data/{language.lower()}_repo_metadata.json", "r") as f:
+        data = json.load(f)
+        for repo in data:
+            stars_v = repo.get("stargazers_count")
+            open_issues_v = repo.get("open_issues_count")
+            forks_v = repo.get("forks_count")
+            size_v = repo.get("size")
+            if None in (stars_v, open_issues_v, forks_v, size_v):
+                continue
+            stars.append(stars_v)
+            open_issues.append(open_issues_v)
+            forks.append(forks_v)
+            size.append(size_v)
+
+    stars_np = np.array(stars)
+    open_issues_np = np.array(open_issues)
+    forks_np = np.array(forks)
+    size_np = np.array(size)
+
+    # Compute correlations and fit lines
+    corr_iss, fitx_iss, fity_iss = corr_and_fit(stars_np, open_issues_np)
+    corr_fs, fitx_fs, fity_fs = corr_and_fit(stars_np, forks_np)
+    corr_fis, fitx_fis, fity_fis = corr_and_fit(forks_np, open_issues_np)
+    corr_issz, fitx_issz, fity_issz = corr_and_fit(open_issues_np, size_np)
+
+    # Plot results
+    fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+    fig.suptitle(
+        f"Correlation Analysis for {language.capitalize()} Repositories",
+        fontsize=16,
+        weight="bold",
+    )
+
+    plot_data = [
+        (
+            axs[0, 0],
+            stars_np,
+            open_issues_np,
+            fitx_iss,
+            fity_iss,
+            "Stars",
+            "Open Issues",
+            corr_iss,
+        ),
+        (axs[0, 1], stars_np, forks_np, fitx_fs, fity_fs, "Stars", "Forks", corr_fs),
+        (
+            axs[1, 0],
+            forks_np,
+            open_issues_np,
+            fitx_fis,
+            fity_fis,
+            "Forks",
+            "Open Issues",
+            corr_fis,
+        ),
+        (
+            axs[1, 1],
+            open_issues_np,
+            size_np,
+            fitx_issz,
+            fity_issz,
+            "Open Issues",
+            "Size (MB)",
+            corr_issz,
+        ),
+    ]
+
+    for ax, x, y, fx, fy, xlabel, ylabel, corr in plot_data:
+        # Scatter + fit
+        ax.scatter(x, y, alpha=0.6, edgecolor="k", linewidths=0.3)
+        if corr > 0.5 or corr < -0.5:
+            ax.plot(fx, fy, color="red")
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        ax.set_title(f"{ylabel} vs {xlabel}", fontsize=11)
+        ax.grid(True, linestyle="--", alpha=0.3)
+        ax.text(
+            0.95,
+            0.05,
+            f"Pearson r = {corr:.3f}" if not np.isnan(corr) else "Pearson r = N/A",
+            transform=ax.transAxes,
+            ha="right",
+            va="bottom",
+            fontsize=9,
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.6),
+        )
+        
+    plt.tight_layout()
+    plt.savefig(f"../Figures/{language.lower()}_correlation_analysis.png")
+    plt.close()
 
 
 if __name__ == "__main__":
@@ -188,7 +301,7 @@ if __name__ == "__main__":
     jpn, jp_llm_n = monthly_llm_ratio_graph("Java")
     cpn, cp_llm_n = monthly_llm_ratio_graph("C#")
     jspn, jsp_llm_n = monthly_llm_ratio_graph("Javascript")
-    gpn, gp_llm_n = monthly_llm_ratio_graph("go")
+    gpn, gp_llm_n = monthly_llm_ratio_graph("Go")
     languages = ["Python", "Java", "C#", "Javascript", "Go"]
     n_repos = [np.sum(ppn), np.sum(jpn), np.sum(cpn), np.sum(jspn), np.sum(gpn)]
     n_llm_repos = [
@@ -209,3 +322,9 @@ if __name__ == "__main__":
     llm_ratio_graph("C#", "size")
     llm_ratio_graph("Javascript", "size")
     llm_ratio_graph("Go", "size")
+
+    correlation_analysis("Python")
+    correlation_analysis("Java")
+    correlation_analysis("C#")
+    correlation_analysis("Javascript")
+    correlation_analysis("Go")

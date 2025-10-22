@@ -106,10 +106,9 @@ def repo_search(
                         "language": item.get("language"),
                         "created_at": item.get("created_at"),
                         "stargazers_count": item.get("stargazers_count"),
-                        "watchers_count": item.get("watchers_count"),
                         "forks_count": item.get("forks_count"),
                         "open_issues_count": item.get("open_issues_count"),
-                        "size": item.get("size")/1000, # size in MB
+                        "size": item.get("size") / 1000, 
                         "topics": item.get("topics", []),
                         "license": (
                             item.get("license", {}).get("key")
