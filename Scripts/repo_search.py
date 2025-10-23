@@ -43,7 +43,7 @@ def repo_search(
 
     # headers do not change
     headers = {
-        "Accept": "application/vnd.github.mercy-preview+json",
+        "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {token}",
     }
 
