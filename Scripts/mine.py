@@ -1,7 +1,6 @@
 import json
 import os
 import time
-import numpy as np
 import requests
 
 CODE_SEARCH_URL = "https://api.github.com/search/code"
@@ -87,64 +86,32 @@ def retrieve_all(query: str, start_size_delta: int):
             size_delta += 5
 
 
-if __name__ == "__main__":
-    # Python LLM usage
-    python_keyword_dict = {"import OpenAI": "OpenAI"}
-    python_repo_list = []
-    for keyword, provider in python_keyword_dict.items():
-        print(f"Searching for keyword: {keyword}")
-        for repo in retrieve_all(f'language:python "{keyword}"', 5):
-            print(f"Found unique repo: {repo['full_name']} at {repo['html_url']}")
-            repo["llm_sdk"] = provider
-            if repo not in python_repo_list:
-                python_repo_list.append(repo)
-    with open("collected_repos_python.json", "w") as f:
-        json.dump(python_repo_list, f, indent=2)
-    # Java LLM usage
-    java_keyword_dict = {}
+def collect_repo_by_language(language: str, keyword_dict):
     java_repo_list = []
-    for keyword, provider in java_keyword_dict.items():
+    for keyword, provider in keyword_dict.items():
         print(f"Searching for keyword: {keyword}")
-        for repo in retrieve_all(f'language:java "{keyword}"', 5):
+        for repo in retrieve_all(f'language:{language} "{keyword}"', 5):
             print(f"Found unique repo: {repo['full_name']} at {repo['html_url']}")
             repo["llm_sdk"] = provider
             if repo not in java_repo_list:
                 java_repo_list.append(repo)
-    with open("collected_repos_java.json", "w") as f:
+    with open(f"collected_repos_{language}.json", "w") as f:
         json.dump(java_repo_list, f, indent=2)
+
+
+if __name__ == "__main__":
+
+    # Python LLM usage
+    collect_repo_by_language("python", {"import OpenAI": "OpenAI"})
+
+    # Java LLM usage
+    collect_repo_by_language("java", {})
+
     # Javascript LLM usage
-    javascript_keyword_dict = {}
-    javascript_repo_list = []
-    for keyword, provider in javascript_keyword_dict.items():
-        print(f"Searching for keyword: {keyword}")
-        for repo in retrieve_all(f'language:javascript "{keyword}"', 5):
-            print(f"Found unique repo: {repo['full_name']} at {repo['html_url']}")
-            repo["llm_sdk"] = provider
-            if repo not in javascript_repo_list:
-                javascript_repo_list.append(repo)
-    with open("collected_repos_javascript.json", "w") as f:
-        json.dump(javascript_repo_list, f, indent=2)
+    collect_repo_by_language("javascript", {})
+
     # Go LLM usage
-    go_keyword_dict = {}
-    go_repo_list = []
-    for keyword, provider in go_keyword_dict.items():
-        print(f"Searching for keyword: {keyword}")
-        for repo in retrieve_all(f'language:go "{keyword}"', 5):
-            print(f"Found unique repo: {repo['full_name']} at {repo['html_url']}")
-            repo["llm_sdk"] = provider
-            if repo not in go_repo_list:
-                go_repo_list.append(repo)
-    with open("collected_repos_go.json", "w") as f:
-        json.dump(go_repo_list, f, indent=2)
+    collect_repo_by_language("go", {})
+
     # C# LLM usage
-    csharp_keyword_dict = {}
-    csharp_repo_list = []
-    for keyword, provider in csharp_keyword_dict.items():
-        print(f"Searching for keyword: {keyword}")
-        for repo in retrieve_all(f'language:c# "{keyword}"', 5):
-            print(f"Found unique repo: {repo['full_name']} at {repo['html_url']}")
-            repo["llm_sdk"] = provider
-            if repo not in csharp_repo_list:
-                csharp_repo_list.append(repo)
-    with open("collected_repos_csharp.json", "w") as f:
-        json.dump(csharp_repo_list, f, indent=2)
+    collect_repo_by_language("csharp", {})
