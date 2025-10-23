@@ -203,34 +203,30 @@ def correlation_analysis(language: str, data_dir="Data", output_dir="../Figures"
     and generate scatter plots with linear fit lines.
     """
 
-    stars, open_issues, forks, size = [], [], [], []
+    stars, forks, subscribers = [], [], []
     with open(f"Data/{language.lower()}_repo_metadata.json", "r") as f:
         data = json.load(f)
         for repo in data:
             stars_v = repo.get("stargazers_count")
-            open_issues_v = repo.get("open_issues_count")
-            forks_v = repo.get("forks_count")
-            size_v = repo.get("size")
-            if None in (stars_v, open_issues_v, forks_v, size_v):
+            forks_v = repo.get("network_count")
+            subscribers_v = repo.get("subscribers_count")
+            if None in (stars_v, forks_v, subscribers_v):
                 continue
             stars.append(stars_v)
-            open_issues.append(open_issues_v)
             forks.append(forks_v)
-            size.append(size_v)
+            subscribers.append(subscribers_v)
 
     stars_np = np.array(stars)
-    open_issues_np = np.array(open_issues)
     forks_np = np.array(forks)
-    size_np = np.array(size)
+    subs_np = np.array(subscribers)
 
     # Compute correlations and fit lines
-    corr_iss, fitx_iss, fity_iss = corr_and_fit(stars_np, open_issues_np)
-    corr_fs, fitx_fs, fity_fs = corr_and_fit(stars_np, forks_np)
-    corr_fis, fitx_fis, fity_fis = corr_and_fit(forks_np, open_issues_np)
-    corr_issz, fitx_issz, fity_issz = corr_and_fit(open_issues_np, size_np)
+    corr_star_fork, fitx_star_fork, fity_star_fork = corr_and_fit(stars_np, forks_np)
+    corr_star_sub, fitx_star_sub, fity_star_sub = corr_and_fit(stars_np, subs_np)
+    corr_sub_fork, fitx_sub_fork, fity_sub_fork = corr_and_fit(subs_np, forks_np)
 
     # Plot results
-    fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+    fig, axs = plt.subplots(3, 1, figsize=(12, 8))
     fig.suptitle(
         f"Correlation Analysis for {language.capitalize()} Repositories",
         fontsize=16,
@@ -239,35 +235,34 @@ def correlation_analysis(language: str, data_dir="Data", output_dir="../Figures"
 
     plot_data = [
         (
-            axs[0, 0],
+            axs[0],
             stars_np,
-            open_issues_np,
-            fitx_iss,
-            fity_iss,
-            "Stars",
-            "Open Issues",
-            corr_iss,
-        ),
-        (axs[0, 1], stars_np, forks_np, fitx_fs, fity_fs, "Stars", "Forks", corr_fs),
-        (
-            axs[1, 0],
             forks_np,
-            open_issues_np,
-            fitx_fis,
-            fity_fis,
-            "Forks",
-            "Open Issues",
-            corr_fis,
+            fitx_star_fork,
+            fity_star_fork,
+            "Number of Stars",
+            "Network Count (Forks)",
+            corr_star_fork,
         ),
         (
-            axs[1, 1],
-            open_issues_np,
-            size_np,
-            fitx_issz,
-            fity_issz,
-            "Open Issues",
-            "Size (MB)",
-            corr_issz,
+            axs[1],
+            stars_np,
+            subs_np,
+            fitx_star_sub,
+            fity_star_sub,
+            "Number of Stars",
+            "Number of Subscribers (Watchers)",
+            corr_star_sub,
+        ),
+        (
+            axs[2],
+            subs_np,
+            forks_np,
+            fitx_sub_fork,
+            fity_sub_fork,
+            "Number of Subscribers (Watchers)",
+            "Network Count (Forks)",
+            corr_sub_fork,
         ),
     ]
 
@@ -290,7 +285,7 @@ def correlation_analysis(language: str, data_dir="Data", output_dir="../Figures"
             fontsize=9,
             bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.6),
         )
-        
+
     plt.tight_layout()
     plt.savefig(f"../Figures/{language.lower()}_correlation_analysis.png")
     plt.close()

@@ -31,7 +31,7 @@ def repo_search(
 
     # github does not display more than 1000 results
     if repos_per_month > 1000:
-        raise ValueError("repos per month cannot be higher than 100")
+        raise ValueError("repos per month cannot be higher than 1000")
 
     # generate the necessary date objects
     date_list = []
@@ -80,12 +80,9 @@ def repo_search(
 
             # deal with rate limit
             if response.status_code == 403:
-                reset_time = int(
-                    response.headers.get("X-RateLimit-Reset", time.time() + 60)
-                )
-                sleep_time = max(reset_time - time.time(), 1)
-                print(f"Rate limited. Sleeping {int(sleep_time)} seconds...")
-                time.sleep(sleep_time)
+                print(f"Rate limited on repo search. Sleeping one minute...")
+                time.sleep(60)
+                response = requests.get(REPO_SEARCH_URL, params=param, headers=headers)
 
             # get the repo items returned
             items = response.json().get("items", [])
@@ -96,6 +93,20 @@ def repo_search(
 
             # record metadata
             for item in items:
+                repo_detail_url = (
+                    f"https://api.github.com/repos/{item.get('full_name')}"
+                )
+                detail_resp = requests.get(repo_detail_url, headers=headers)
+
+                if detail_resp.status_code == 403:
+                    print(
+                        f"Rate limited on detailed repo info. Sleeping one minute..."
+                    )
+                    time.sleep(60)
+                    detail_resp = requests.get(repo_detail_url, headers=headers)
+
+                detailed_data = detail_resp.json()
+
                 responses.append(
                     {
                         "id": item.get("id"),
@@ -106,9 +117,8 @@ def repo_search(
                         "language": item.get("language"),
                         "created_at": item.get("created_at"),
                         "stargazers_count": item.get("stargazers_count"),
-                        "forks_count": item.get("forks_count"),
                         "open_issues_count": item.get("open_issues_count"),
-                        "size": item.get("size") / 1000, 
+                        "size": item.get("size") / 1000,
                         "topics": item.get("topics", []),
                         "license": (
                             item.get("license", {}).get("key")
@@ -122,6 +132,8 @@ def repo_search(
                             item["owner"]["type"] if item.get("owner") else None
                         ),
                         "archived": item.get("archived"),
+                        "subscribers_count": detailed_data.get("subscribers_count"),
+                        "network_count": detailed_data.get("network_count"),
                     }
                 )
                 print(
@@ -132,6 +144,9 @@ def repo_search(
                 n += 1
                 if n >= repos_per_month:
                     break
+
+                # wait a bit before next iteration
+                time.sleep(0.2)
 
             # break if reached the maximum number of github resuls
             i += 1
