@@ -137,7 +137,7 @@ def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""
                 repo_dict[full_name] = repo(full_name, data["html_url"])
             repo_dict[full_name].add_file_label(group, data["file_path"])
     with open(
-        f"collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json", "w"
+        f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json", "w"
     ) as f:
         json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
 
@@ -162,14 +162,29 @@ if __name__ == "__main__":
         suffix="library",
     )
 
+    # Python LLM model usage
+    collect_repo_by_language("python", {}, suffix="model")
+
     # Java LLM usage
     collect_repo_by_language("java", {}, suffix="library")
+
+    # Java LLM model usage
+    collect_repo_by_language("java", {}, suffix="model")
 
     # Javascript LLM usage
     collect_repo_by_language("javascript", {}, suffix="library")
 
+    # Javascript LLM model usage
+    collect_repo_by_language("javascript", {}, suffix="model")
+
     # Go LLM usage
     collect_repo_by_language("go", {}, suffix="library")
 
+    # Go LLM model usage
+    collect_repo_by_language("go", {}, suffix="model")
+
     # C# LLM usage
     collect_repo_by_language("csharp", {}, suffix="library")
+
+    # C# LLM model usage
+    collect_repo_by_language("csharp", {}, suffix="model")
