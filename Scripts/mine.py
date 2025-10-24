@@ -10,11 +10,43 @@ HEADERS = {
 }
 
 
+class repo:
+
+    def __init__(self, full_name, html_url):
+        self.full_name = full_name
+        self.html_url = html_url
+        self.labels = {}
+
+    def __hash__(self) -> int:
+        return hash(self.full_name)
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, repo) and self.full_name == other.full_name
+
+    def add_file_label(self, label: str, file_path: str):
+        if label in self.labels:
+            self.labels[label].add(file_path)
+        else:
+            self.labels[label] = set([file_path])
+
+    def to_dict(self):
+        return {
+            "full_name": self.full_name,
+            "html_url": self.html_url,
+            "labels": {k: list(v) for k, v in self.labels.items()},
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        obj = cls(data["full_name"], data["html_url"])
+        obj.labels = {k: set(v) for k, v in data.get("labels", {}).items()}
+        return obj
+
+
 def retrieve_all(query: str, start_size_delta: int):
-    """retrieve all results for a given query by chunking by size"""
+    """retrieve all results for a given query by chunking with repo size"""
 
     request_ns = []
-    seen_repos = set()
     size_delta = start_size_delta
     curr_size = 0
     while curr_size < 5000:
@@ -28,6 +60,8 @@ def retrieve_all(query: str, start_size_delta: int):
         for i in range(10):
             params["page"] = i + 1
             response = requests.get(CODE_SEARCH_URL, headers=HEADERS, params=params)
+            if response.status_code == 401:
+                raise Exception("Unauthorized: Check your GITHUB_TOKEN environment variable.")
             if response.status_code != 200:
                 if int(response.headers.get("X-RateLimit-Remaining", "0")) == 0:
                     reset_time = int(
@@ -45,11 +79,11 @@ def retrieve_all(query: str, start_size_delta: int):
 
                     if response.status_code != 200:
                         raise Exception(
-                            f"GitHub API request failed with status code {response.status_code}: {response.json().get('message',"No message")}"
+                            f"GitHub API request failed with status code {response.status_code}: {response.json().get('message','No message')}"
                         )
                 else:
                     raise Exception(
-                        f"GitHub API request failed with status code {response.status_code}: {response.json().get('message',"No message")}"
+                        f"GitHub API request failed with status code {response.status_code}: {response.json().get('message','No message')}"
                     )
 
             data = response.json()
@@ -57,12 +91,12 @@ def retrieve_all(query: str, start_size_delta: int):
             if not items:
                 break
             for item in items:
-                repo = item.get("repository")
-                if repo and repo["full_name"] not in seen_repos:
-                    seen_repos.add(repo["full_name"])
+                repo_v = item.get("repository")
+                if repo_v:
                     yield {
-                        "full_name": repo.get("full_name"),
-                        "html_url": repo.get("html_url"),
+                        "full_name": repo_v.get("full_name"),
+                        "html_url": repo_v.get("html_url"),
+                        "file_path": item.get("path"),
                     }
             request_n += len(items)
             print(f'Retrieved {request_n} results for "query:{params["q"]}" so far...')
@@ -86,17 +120,23 @@ def retrieve_all(query: str, start_size_delta: int):
             size_delta += 5
 
 
-def collect_repo_by_language(language: str, keyword_dict):
-    java_repo_list = []
-    for keyword, provider in keyword_dict.items():
+def collect_repo_by_language(language: str, keyword_dict: dict):
+    if not keyword_dict:
+        print(f"No keywords for {language}, skipping.")
+        return
+    repo_dict = {}
+    for keyword, group in keyword_dict.items():
         print(f"Searching for keyword: {keyword}")
-        for repo in retrieve_all(f'language:{language} "{keyword}"', 5):
-            print(f"Found unique repo: {repo['full_name']} at {repo['html_url']}")
-            repo["llm_sdk"] = provider
-            if repo not in java_repo_list:
-                java_repo_list.append(repo)
+        for data in retrieve_all(f'language:{language} "{keyword}"', 5):
+            print(
+                f"Found reference of \"{keyword}\" for {language}. repo - {data['full_name']}, file - {data['file_path']}"
+            )
+            full_name = data["full_name"]
+            if full_name not in repo_dict:
+                repo_dict[full_name] = repo(full_name, data["html_url"])
+            repo_dict[full_name].add_file_label(group, data["file_path"])
     with open(f"collected_repos_{language}.json", "w") as f:
-        json.dump(java_repo_list, f, indent=2)
+        json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
 
 
 if __name__ == "__main__":
