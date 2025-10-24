@@ -11,6 +11,7 @@ HEADERS = {
 
 
 class repo:
+    """Class representing a GitHub repository with labeles for each file."""
 
     def __init__(self, full_name, html_url):
         self.full_name = full_name
@@ -37,16 +38,15 @@ class repo:
         }
 
     @classmethod
-    def from_dict(cls, data):
-        obj = cls(data["full_name"], data["html_url"])
-        obj.labels = {k: set(v) for k, v in data.get("labels", {}).items()}
+    def from_dict(cls, dict):
+        obj = cls(dict["full_name"], dict["html_url"])
+        obj.labels = {k: set(v) for k, v in dict.get("labels", {}).items()}
         return obj
 
 
 def retrieve_all(query: str, start_size_delta: int):
-    """retrieve all results for a given query by chunking with repo size"""
+    """Retrieve all results for a given query by chunking with repo size"""
 
-    request_ns = []
     size_delta = start_size_delta
     curr_size = 0
     while curr_size < 5000:
@@ -61,7 +61,9 @@ def retrieve_all(query: str, start_size_delta: int):
             params["page"] = i + 1
             response = requests.get(CODE_SEARCH_URL, headers=HEADERS, params=params)
             if response.status_code == 401:
-                raise Exception("Unauthorized: Check your GITHUB_TOKEN environment variable.")
+                raise Exception(
+                    "Unauthorized: Check your GITHUB_TOKEN environment variable."
+                )
             if response.status_code != 200:
                 if int(response.headers.get("X-RateLimit-Remaining", "0")) == 0:
                     reset_time = int(
@@ -101,7 +103,6 @@ def retrieve_all(query: str, start_size_delta: int):
             request_n += len(items)
             print(f'Retrieved {request_n} results for "query:{params["q"]}" so far...')
             time.sleep(1)
-        request_ns.append(request_n)
 
         if request_n >= 1000:
             if size_delta <= 1:
@@ -120,7 +121,7 @@ def retrieve_all(query: str, start_size_delta: int):
             size_delta += 5
 
 
-def collect_repo_by_language(language: str, keyword_dict: dict):
+def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""):
     if not keyword_dict:
         print(f"No keywords for {language}, skipping.")
         return
@@ -135,23 +136,40 @@ def collect_repo_by_language(language: str, keyword_dict: dict):
             if full_name not in repo_dict:
                 repo_dict[full_name] = repo(full_name, data["html_url"])
             repo_dict[full_name].add_file_label(group, data["file_path"])
-    with open(f"collected_repos_{language}.json", "w") as f:
+    with open(
+        f"collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json", "w"
+    ) as f:
         json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
 
 
 if __name__ == "__main__":
 
     # Python LLM usage
-    collect_repo_by_language("python", {"import OpenAI": "OpenAI"})
+    collect_repo_by_language(
+        "python",
+        {
+            "import openai": "OpenAI",
+            "from google import genai": "Google",
+            "import google.genai": "Google",
+            "import anthropic": "Anthropic",
+            "from xai_sdk import Client": "xAI",
+            "import xai_sdk.Client": "xAI",
+            "from llama_api_client import LlamaAPIClient": "Meta",
+            "import llama_api_client.LlamaAPIClient": "Meta",
+            "from mistralai import Mistral": "Mistral",
+            "import mistralai.Mistral": "Mistral",
+        },
+        suffix="library",
+    )
 
     # Java LLM usage
-    collect_repo_by_language("java", {})
+    collect_repo_by_language("java", {}, suffix="library")
 
     # Javascript LLM usage
-    collect_repo_by_language("javascript", {})
+    collect_repo_by_language("javascript", {}, suffix="library")
 
     # Go LLM usage
-    collect_repo_by_language("go", {})
+    collect_repo_by_language("go", {}, suffix="library")
 
     # C# LLM usage
-    collect_repo_by_language("csharp", {})
+    collect_repo_by_language("csharp", {}, suffix="library")
