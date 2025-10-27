@@ -108,15 +108,30 @@ def create_model_provider_dict(
     model_to_provider = {}
 
     for model in openai_models:
-        model_to_provider[model] = "openai"
+        if model in model_to_provider:
+            model_to_provider[model].append("openai")
+        else:
+            model_to_provider[model] = ["openai"]
     for model in gemini_models:
-        model_to_provider[model] = "gemini"
+        if model in model_to_provider:
+            model_to_provider[model].append("google")
+        else:
+            model_to_provider[model] = ["google"]
     for model in mistral_models:
-        model_to_provider[model] = "mistral"
+        if model in model_to_provider:
+            model_to_provider[model].append("mistral")
+        else:
+            model_to_provider[model] = ["mistral"]
     for model in anthropic_models:
-        model_to_provider[model] = "anthropic"
+        if model in model_to_provider:
+            model_to_provider[model].append("anthropic")
+        else:
+            model_to_provider[model] = ["anthropic"]
     for model in xai_models:
-        model_to_provider[model] = "xai"
+        if model in model_to_provider:
+            model_to_provider[model].append("xai")
+        else:
+            model_to_provider[model] = ["xai"]
 
     return model_to_provider
 

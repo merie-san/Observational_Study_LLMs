@@ -163,14 +163,21 @@ if __name__ == "__main__":
     )
 
     # Python LLM model usage
-    collect_repo_by_language("python", {
-        
-    }, suffix="model")
+    collect_repo_by_language("python", {}, suffix="model")
 
     # Java LLM usage
-    collect_repo_by_language("java", {"import com.openai.client.OpenAIClient;":"OpenAI", "import com.openai.client.*;":"OpenAI"
-
-    }, suffix="library")
+    collect_repo_by_language(
+        "java",
+        {
+            "import com.openai.client.OpenAIClient;": "OpenAI",
+            "import com.openai.client.*;": "OpenAI",
+            "import com.google.genai.Client;": "Google",
+            "import com.google.genai.*;": "Google",
+            "import com.anthropic.client.AnthropicClient;": "Anthropic",
+            "import com.anthropic.client.*;": "Anthropic",
+        },
+        suffix="library",
+    )
 
     # Java LLM model usage
     collect_repo_by_language("java", {}, suffix="model")
