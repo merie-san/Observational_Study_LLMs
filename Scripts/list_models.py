@@ -2,6 +2,9 @@ import os
 from openai import OpenAI
 from mistralai import Mistral
 from google import genai
+import anthropic
+from xai_sdk import Client
+import json
 
 STARTING_MODELS_OPENAI = [
     "gpt-5",
@@ -71,7 +74,64 @@ def list_models():
         for model in dict(mistral_client.models.list())["data"]
         if model.id not in STARTING_MODELS_MISTRALAI
     ] + STARTING_MODELS_MISTRALAI
-    print(openai_models, gemini_models, mistral_models)
+    anthropic_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    anthropic_models = [
+        model.id
+        for model in dict(anthropic_client.models.list())["data"]
+        if model.id not in STARTING_MODELS_ANTHROPIC
+    ] + STARTING_MODELS_ANTHROPIC
+    xai_client = Client(api_key=os.getenv("XAI_API_KEY"))
+    xai_models = [ # adding language models
+        model.id
+        for model in dict(xai_client.models.list_language_models())["data"]
+        if model.id not in STARTING_MODELS_XAI
+    ] + STARTING_MODELS_XAI
+    xai_models = [ # adding embedded models
+        model.id
+        for model in dict(xai_client.models.list_embedding_models())["data"]
+        if model.id not in STARTING_MODELS_XAI
+    ] + STARTING_MODELS_XAI
+    xai_models = [ # adding image generation models
+        model.id
+        for model in dict(xai_client.models.list_image_generation_models())["data"]
+        if model.id not in STARTING_MODELS_XAI
+    ] + STARTING_MODELS_XAI
+
+    # Creiamo il dizionario modello → provider
+    model_provider_dict = create_model_provider_dict(
+        openai_models, gemini_models, mistral_models, anthropic_models, xai_models
+    )
+
+    save_model_provider_dict(model_provider_dict)
+    return model_provider_dict
+
+def create_model_provider_dict(openai_models, gemini_models, mistral_models, anthropic_models, xai_models):
+    """
+    Crea un dizionario dove le chiavi sono i nomi dei modelli e i valori sono i produttori corrispondenti.
+    """
+    model_to_provider = {}
+
+    for model in openai_models:
+        model_to_provider[model] = "openai"
+    for model in gemini_models:
+        model_to_provider[model] = "gemini"
+    for model in mistral_models:
+        model_to_provider[model] = "mistral"
+    for model in anthropic_models:
+        model_to_provider[model] = "anthropic"
+    for model in xai_models:
+        model_to_provider[model] = "xai"
+
+    return model_to_provider
+
+def save_model_provider_dict(model_provider_dict, filename="model_provider_dict.json"):
+
+    try:
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(model_provider_dict, f, indent=4, ensure_ascii=False)
+        print(f"Dizionario salvato correttamente in '{filename}'")
+    except Exception as e:
+        print(f"Errore durante il salvataggio del file JSON: {e}")
 
 if __name__ == "__main__":
     list_models()
