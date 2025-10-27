@@ -163,13 +163,15 @@ def create_model_keyword_dict(
     meta_models,
 ):
     model_keyword_dict = {
-        "openai": [f'"{model}"' for model in openai_models],
-        "google": [f'"{model}"' for model in gemini_models],
-        "mistral": [f'"{model}"' for model in mistral_models],
-        "anthropic": [f'"{model}"' for model in anthropic_models],
-        "xai": [f'"{model}"' for model in xai_models],
-        "meta": [f'"{model}"' for model in meta_models],
+        model: model
+        for model in openai_models
+        + gemini_models
+        + mistral_models
+        + anthropic_models
+        + xai_models
+        + meta_models
     }
+
     with open("model_keyword_dict.json", "w", encoding="utf-8") as f:
         json.dump(model_keyword_dict, f, indent=4, ensure_ascii=False)
 

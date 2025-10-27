@@ -143,6 +143,8 @@ def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""
 
 
 if __name__ == "__main__":
+    with open("model_keyword_dict.json", "r") as f:
+        model_keyword_dict = json.load(f)
 
     # Python LLM usage
     collect_repo_by_language(
@@ -163,7 +165,7 @@ if __name__ == "__main__":
     )
 
     # Python LLM model usage
-    collect_repo_by_language("python", {}, suffix="model")
+    collect_repo_by_language("python", model_keyword_dict, suffix="model")
 
     # Java LLM usage
     collect_repo_by_language(
@@ -180,22 +182,22 @@ if __name__ == "__main__":
     )
 
     # Java LLM model usage
-    collect_repo_by_language("java", {}, suffix="model")
+    collect_repo_by_language("java", model_keyword_dict, suffix="model")
 
     # Javascript LLM usage
     collect_repo_by_language("javascript", {}, suffix="library")
 
     # Javascript LLM model usage
-    collect_repo_by_language("javascript", {}, suffix="model")
+    collect_repo_by_language("javascript", model_keyword_dict, suffix="model")
 
     # Go LLM usage
     collect_repo_by_language("go", {}, suffix="library")
 
     # Go LLM model usage
-    collect_repo_by_language("go", {}, suffix="model")
+    collect_repo_by_language("go", model_keyword_dict, suffix="model")
 
     # C# LLM usage
     collect_repo_by_language("csharp", {}, suffix="library")
 
     # C# LLM model usage
-    collect_repo_by_language("csharp", {}, suffix="model")
+    collect_repo_by_language("csharp", model_keyword_dict, suffix="model")
