@@ -89,12 +89,11 @@ def combine(
 
 
 if __name__ == "__main__":
-    model_library_map = {
-        # TODO
-    }
-    combine(
-        library_data_path="Data/collected_repos_python_library.json",
-        model_data_path="Data/collected_repos_python_model.json",
-        output_path="Data/collected_repos_python.json",
-        model_library_map=model_library_map,
-    )
+    with open("model_provider_dict.json", "r") as f:
+        model_library_map = json.load(f)
+        combine(
+            library_data_path="Data/collected_repos_python_library.json",
+            model_data_path="Data/collected_repos_python_model.json",
+            output_path="Data/collected_repos_python.json",
+            model_library_map=model_library_map,
+        )

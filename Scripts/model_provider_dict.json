@@ -237,210 +237,203 @@
         "openai"
     ],
     "Llama-4-Maverick-17B-128E-Instruct-FP8": [
-        "openai"
+        "openai",
+        "meta"
     ],
     "Llama-4-Scout-17B-16E-Instruct-FP8": [
-        "openai"
+        "openai",
+        "meta"
     ],
-    "models/embedding-gecko-001": [
+    "embedding-gecko-001": [
         "google"
     ],
-    "models/gemini-2.5-pro-preview-03-25": [
+    "gemini-2.5-pro-preview-03-25": [
         "google"
     ],
-    "models/gemini-2.5-flash-preview-05-20": [
-        "google"
-    ],
-    "models/gemini-2.5-flash": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-lite-preview-06-17": [
-        "google"
-    ],
-    "models/gemini-2.5-pro-preview-05-06": [
-        "google"
-    ],
-    "models/gemini-2.5-pro-preview-06-05": [
-        "google"
-    ],
-    "models/gemini-2.5-pro": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-exp": [
-        "google"
-    ],
-    "models/gemini-2.0-flash": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-001": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-lite-001": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-lite": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-lite-preview-02-05": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-lite-preview": [
-        "google"
-    ],
-    "models/gemini-2.0-pro-exp": [
-        "google"
-    ],
-    "models/gemini-2.0-pro-exp-02-05": [
-        "google"
-    ],
-    "models/gemini-exp-1206": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-thinking-exp-01-21": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-thinking-exp": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-thinking-exp-1219": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-preview-tts": [
-        "google"
-    ],
-    "models/gemini-2.5-pro-preview-tts": [
-        "google"
-    ],
-    "models/learnlm-2.0-flash-experimental": [
-        "google"
-    ],
-    "models/gemma-3-1b-it": [
-        "google"
-    ],
-    "models/gemma-3-4b-it": [
-        "google"
-    ],
-    "models/gemma-3-12b-it": [
-        "google"
-    ],
-    "models/gemma-3-27b-it": [
-        "google"
-    ],
-    "models/gemma-3n-e4b-it": [
-        "google"
-    ],
-    "models/gemma-3n-e2b-it": [
-        "google"
-    ],
-    "models/gemini-flash-latest": [
-        "google"
-    ],
-    "models/gemini-flash-lite-latest": [
-        "google"
-    ],
-    "models/gemini-pro-latest": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-lite": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-image-preview": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-image": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-preview-09-2025": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-lite-preview-09-2025": [
-        "google"
-    ],
-    "models/gemini-robotics-er-1.5-preview": [
-        "google"
-    ],
-    "models/gemini-2.5-computer-use-preview-10-2025": [
-        "google"
-    ],
-    "models/embedding-001": [
-        "google"
-    ],
-    "models/text-embedding-004": [
-        "google"
-    ],
-    "models/gemini-embedding-exp-03-07": [
-        "google"
-    ],
-    "models/gemini-embedding-exp": [
-        "google"
-    ],
-    "models/gemini-embedding-001": [
-        "google"
-    ],
-    "models/aqa": [
-        "google"
-    ],
-    "models/imagen-3.0-generate-002": [
-        "google"
-    ],
-    "models/imagen-4.0-generate-preview-06-06": [
-        "google"
-    ],
-    "models/imagen-4.0-ultra-generate-preview-06-06": [
-        "google"
-    ],
-    "models/imagen-4.0-generate-001": [
-        "google"
-    ],
-    "models/imagen-4.0-ultra-generate-001": [
-        "google"
-    ],
-    "models/imagen-4.0-fast-generate-001": [
-        "google"
-    ],
-    "models/veo-2.0-generate-001": [
-        "google"
-    ],
-    "models/veo-3.0-generate-preview": [
-        "google"
-    ],
-    "models/veo-3.0-fast-generate-preview": [
-        "google"
-    ],
-    "models/veo-3.0-generate-001": [
-        "google"
-    ],
-    "models/veo-3.0-fast-generate-001": [
-        "google"
-    ],
-    "models/veo-3.1-generate-preview": [
-        "google"
-    ],
-    "models/veo-3.1-fast-generate-preview": [
-        "google"
-    ],
-    "models/gemini-2.0-flash-live-001": [
-        "google"
-    ],
-    "models/gemini-live-2.5-flash-preview": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-live-preview": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-native-audio-latest": [
-        "google"
-    ],
-    "models/gemini-2.5-flash-native-audio-preview-09-2025": [
-        "google"
-    ],
-    "gemini-2.5-pro": [
+    "gemini-2.5-flash-preview-05-20": [
         "google"
     ],
     "gemini-2.5-flash": [
         "google"
     ],
+    "gemini-2.5-flash-lite-preview-06-17": [
+        "google"
+    ],
+    "gemini-2.5-pro-preview-05-06": [
+        "google"
+    ],
+    "gemini-2.5-pro-preview-06-05": [
+        "google"
+    ],
+    "gemini-2.5-pro": [
+        "google"
+    ],
+    "gemini-2.0-flash-exp": [
+        "google"
+    ],
+    "gemini-2.0-flash": [
+        "google"
+    ],
+    "gemini-2.0-flash-001": [
+        "google"
+    ],
+    "gemini-2.0-flash-lite-001": [
+        "google"
+    ],
+    "gemini-2.0-flash-lite": [
+        "google"
+    ],
+    "gemini-2.0-flash-lite-preview-02-05": [
+        "google"
+    ],
+    "gemini-2.0-flash-lite-preview": [
+        "google"
+    ],
+    "gemini-2.0-pro-exp": [
+        "google"
+    ],
+    "gemini-2.0-pro-exp-02-05": [
+        "google"
+    ],
+    "gemini-exp-1206": [
+        "google"
+    ],
+    "gemini-2.0-flash-thinking-exp-01-21": [
+        "google"
+    ],
+    "gemini-2.0-flash-thinking-exp": [
+        "google"
+    ],
+    "gemini-2.0-flash-thinking-exp-1219": [
+        "google"
+    ],
+    "gemini-2.5-flash-preview-tts": [
+        "google"
+    ],
+    "gemini-2.5-pro-preview-tts": [
+        "google"
+    ],
+    "learnlm-2.0-flash-experimental": [
+        "google"
+    ],
+    "gemma-3-1b-it": [
+        "google"
+    ],
+    "gemma-3-4b-it": [
+        "google"
+    ],
+    "gemma-3-12b-it": [
+        "google"
+    ],
+    "gemma-3-27b-it": [
+        "google"
+    ],
+    "gemma-3n-e4b-it": [
+        "google"
+    ],
+    "gemma-3n-e2b-it": [
+        "google"
+    ],
+    "gemini-flash-latest": [
+        "google"
+    ],
+    "gemini-flash-lite-latest": [
+        "google"
+    ],
+    "gemini-pro-latest": [
+        "google"
+    ],
     "gemini-2.5-flash-lite": [
+        "google"
+    ],
+    "gemini-2.5-flash-image-preview": [
+        "google"
+    ],
+    "gemini-2.5-flash-image": [
+        "google"
+    ],
+    "gemini-2.5-flash-preview-09-2025": [
+        "google"
+    ],
+    "gemini-2.5-flash-lite-preview-09-2025": [
+        "google"
+    ],
+    "gemini-robotics-er-1.5-preview": [
+        "google"
+    ],
+    "gemini-2.5-computer-use-preview-10-2025": [
+        "google"
+    ],
+    "embedding-001": [
+        "google"
+    ],
+    "text-embedding-004": [
+        "google"
+    ],
+    "gemini-embedding-exp-03-07": [
+        "google"
+    ],
+    "gemini-embedding-exp": [
+        "google"
+    ],
+    "gemini-embedding-001": [
+        "google"
+    ],
+    "aqa": [
+        "google"
+    ],
+    "imagen-3.0-generate-002": [
+        "google"
+    ],
+    "imagen-4.0-generate-preview-06-06": [
+        "google"
+    ],
+    "imagen-4.0-ultra-generate-preview-06-06": [
+        "google"
+    ],
+    "imagen-4.0-generate-001": [
+        "google"
+    ],
+    "imagen-4.0-ultra-generate-001": [
+        "google"
+    ],
+    "imagen-4.0-fast-generate-001": [
+        "google"
+    ],
+    "veo-2.0-generate-001": [
+        "google"
+    ],
+    "veo-3.0-generate-preview": [
+        "google"
+    ],
+    "veo-3.0-fast-generate-preview": [
+        "google"
+    ],
+    "veo-3.0-generate-001": [
+        "google"
+    ],
+    "veo-3.0-fast-generate-001": [
+        "google"
+    ],
+    "veo-3.1-generate-preview": [
+        "google"
+    ],
+    "veo-3.1-fast-generate-preview": [
+        "google"
+    ],
+    "gemini-2.0-flash-live-001": [
+        "google"
+    ],
+    "gemini-live-2.5-flash-preview": [
+        "google"
+    ],
+    "gemini-2.5-flash-live-preview": [
+        "google"
+    ],
+    "gemini-2.5-flash-native-audio-latest": [
+        "google"
+    ],
+    "gemini-2.5-flash-native-audio-preview-09-2025": [
         "google"
     ],
     "mistral-medium-2505": [
@@ -579,11 +572,9 @@
         "mistral"
     ],
     "voxtral-mini-2507": [
-        "mistral",
         "mistral"
     ],
     "voxtral-mini-latest": [
-        "mistral",
         "mistral"
     ],
     "voxtral-small-2507": [
@@ -714,5 +705,11 @@
     ],
     "grok-2-image-1212": [
         "xai"
+    ],
+    "Llama-3.3-70B-Instruct": [
+        "meta"
+    ],
+    "Llama-3.3-8B-Instruct": [
+        "meta"
     ]
 }

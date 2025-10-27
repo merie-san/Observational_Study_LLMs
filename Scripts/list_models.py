@@ -64,7 +64,7 @@ def list_models():
     ] + STARTING_MODELS_OPENAI
     client_google = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
     gemini_models = [
-        model.name
+        str(model.name).removeprefix("models/")
         for model in client_google.models.list()
         if model.name not in STARTING_MODELS_GEMINI
     ] + STARTING_MODELS_GEMINI
@@ -93,14 +93,27 @@ def list_models():
         mistral_models,
         anthropic_models,
         xai_models=STARTING_MODELS_XAI,
+        meta_models=STARTING_MODELS_META,
     )
 
     save_model_provider_dict(model_provider_dict)
-    return model_provider_dict
+    create_model_keyword_dict(
+        openai_models,
+        gemini_models,
+        mistral_models,
+        anthropic_models,
+        STARTING_MODELS_XAI,
+        STARTING_MODELS_META,
+    )
 
 
 def create_model_provider_dict(
-    openai_models, gemini_models, mistral_models, anthropic_models, xai_models
+    openai_models,
+    gemini_models,
+    mistral_models,
+    anthropic_models,
+    xai_models,
+    meta_models,
 ):
     """
     Crea un dizionario dove le chiavi sono i nomi dei modelli e i valori sono i produttori corrispondenti.
@@ -108,32 +121,57 @@ def create_model_provider_dict(
     model_to_provider = {}
 
     for model in openai_models:
-        if model in model_to_provider:
+        if model in model_to_provider and "openai" not in model_to_provider[model]:
             model_to_provider[model].append("openai")
         else:
             model_to_provider[model] = ["openai"]
     for model in gemini_models:
-        if model in model_to_provider:
+        if model in model_to_provider and "google" not in model_to_provider[model]:
             model_to_provider[model].append("google")
         else:
             model_to_provider[model] = ["google"]
     for model in mistral_models:
-        if model in model_to_provider:
+        if model in model_to_provider and "mistral" not in model_to_provider[model]:
             model_to_provider[model].append("mistral")
         else:
             model_to_provider[model] = ["mistral"]
     for model in anthropic_models:
-        if model in model_to_provider:
+        if model in model_to_provider and "anthropic" not in model_to_provider[model]:
             model_to_provider[model].append("anthropic")
         else:
             model_to_provider[model] = ["anthropic"]
     for model in xai_models:
-        if model in model_to_provider:
+        if model in model_to_provider and "xai" not in model_to_provider[model]:
             model_to_provider[model].append("xai")
         else:
             model_to_provider[model] = ["xai"]
+    for model in meta_models:
+        if model in model_to_provider and "meta" not in model_to_provider[model]:
+            model_to_provider[model].append("meta")
+        else:
+            model_to_provider[model] = ["meta"]
 
     return model_to_provider
+
+
+def create_model_keyword_dict(
+    openai_models,
+    gemini_models,
+    mistral_models,
+    anthropic_models,
+    xai_models,
+    meta_models,
+):
+    model_keyword_dict = {
+        "openai": [f'"{model}"' for model in openai_models],
+        "google": [f'"{model}"' for model in gemini_models],
+        "mistral": [f'"{model}"' for model in mistral_models],
+        "anthropic": [f'"{model}"' for model in anthropic_models],
+        "xai": [f'"{model}"' for model in xai_models],
+        "meta": [f'"{model}"' for model in meta_models],
+    }
+    with open("model_keyword_dict.json", "w", encoding="utf-8") as f:
+        json.dump(model_keyword_dict, f, indent=4, ensure_ascii=False)
 
 
 def save_model_provider_dict(model_provider_dict, filename="model_provider_dict.json"):
