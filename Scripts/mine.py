@@ -196,7 +196,7 @@ if __name__ == "__main__":
         "github.com/liushuangls/go-anthropic": "Anthropic",
         'anthropic "github.com/adamchol/go-anthropic-sdk"': "Anthropic",
         "github.com/gage-technologies/mistral-go": "Mistral",
-        
+
     }, suffix="library")
 
     # Go LLM model usage
