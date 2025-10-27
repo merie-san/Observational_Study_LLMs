@@ -152,10 +152,12 @@ if __name__ == "__main__":
             "from google import genai": "Google",
             "import google.genai": "Google",
             "import anthropic": "Anthropic",
+            "from anthropic import Anthropic": "Anthropic",
             "from xai_sdk import Client": "xAI",
             "import xai_sdk.Client": "xAI",
             "from llama_api_client import LlamaAPIClient": "Meta",
             "import llama_api_client.LlamaAPIClient": "Meta",
+            "from meta_ai_api import MetaAI": "Meta",
             "from mistralai import Mistral": "Mistral",
             "import mistralai.Mistral": "Mistral",
         },
@@ -168,8 +170,13 @@ if __name__ == "__main__":
     }, suffix="model")
 
     # Java LLM usage
-    collect_repo_by_language("java", {"import com.openai.client.OpenAIClient;":"OpenAI", "import com.openai.client.*;":"OpenAI"
-
+    collect_repo_by_language(
+        "java",
+        {
+            "import com.openai": "OpenAI",
+            "import com.google": "Google",
+            "import com.anthropic": "Anthropic",
+            "import com.meta": "Meta", # per xAI e Minstral non ho trovato solo third parties SDKs
     }, suffix="library")
 
     # Java LLM model usage
@@ -182,7 +189,15 @@ if __name__ == "__main__":
     collect_repo_by_language("javascript", {}, suffix="model")
 
     # Go LLM usage
-    collect_repo_by_language("go", {}, suffix="library")
+    collect_repo_by_language("go", {
+        "github.com/openai/openai-go": "OpenAI",
+        "google.golang.org/genai": "Google",
+        "github.com/anthropics": "Anthropic",
+        "github.com/liushuangls/go-anthropic": "Anthropic",
+        'anthropic "github.com/adamchol/go-anthropic-sdk"': "Anthropic",
+        "github.com/gage-technologies/mistral-go": "Mistral",
+        
+    }, suffix="library")
 
     # Go LLM model usage
     collect_repo_by_language("go", {}, suffix="model")
