@@ -77,35 +77,31 @@ def list_models():
     anthropic_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
     anthropic_models = [
         model.id
-        for model in dict(anthropic_client.models.list())["data"]
+        for model in anthropic_client.models.list()
         if model.id not in STARTING_MODELS_ANTHROPIC
     ] + STARTING_MODELS_ANTHROPIC
-    xai_client = Client(api_key=os.getenv("XAI_API_KEY"))
-    xai_models = [ # adding language models
-        model.id
-        for model in dict(xai_client.models.list_language_models())["data"]
-        if model.id not in STARTING_MODELS_XAI
-    ] + STARTING_MODELS_XAI
-    xai_models = [ # adding embedded models
-        model.id
-        for model in dict(xai_client.models.list_embedding_models())["data"]
-        if model.id not in STARTING_MODELS_XAI
-    ] + STARTING_MODELS_XAI
-    xai_models = [ # adding image generation models
-        model.id
-        for model in dict(xai_client.models.list_image_generation_models())["data"]
-        if model.id not in STARTING_MODELS_XAI
-    ] + STARTING_MODELS_XAI
+
+    print(openai_models)
+    print(gemini_models)
+    print(mistral_models)
+    print(anthropic_models)
 
     # Creiamo il dizionario modello → provider
     model_provider_dict = create_model_provider_dict(
-        openai_models, gemini_models, mistral_models, anthropic_models, xai_models
+        openai_models,
+        gemini_models,
+        mistral_models,
+        anthropic_models,
+        xai_models=STARTING_MODELS_XAI,
     )
 
     save_model_provider_dict(model_provider_dict)
     return model_provider_dict
 
-def create_model_provider_dict(openai_models, gemini_models, mistral_models, anthropic_models, xai_models):
+
+def create_model_provider_dict(
+    openai_models, gemini_models, mistral_models, anthropic_models, xai_models
+):
     """
     Crea un dizionario dove le chiavi sono i nomi dei modelli e i valori sono i produttori corrispondenti.
     """
@@ -124,6 +120,7 @@ def create_model_provider_dict(openai_models, gemini_models, mistral_models, ant
 
     return model_to_provider
 
+
 def save_model_provider_dict(model_provider_dict, filename="model_provider_dict.json"):
 
     try:
@@ -132,6 +129,7 @@ def save_model_provider_dict(model_provider_dict, filename="model_provider_dict.
         print(f"Dizionario salvato correttamente in '{filename}'")
     except Exception as e:
         print(f"Errore durante il salvataggio del file JSON: {e}")
+
 
 if __name__ == "__main__":
     list_models()

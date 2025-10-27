@@ -163,10 +163,14 @@ if __name__ == "__main__":
     )
 
     # Python LLM model usage
-    collect_repo_by_language("python", {}, suffix="model")
+    collect_repo_by_language("python", {
+        
+    }, suffix="model")
 
     # Java LLM usage
-    collect_repo_by_language("java", {}, suffix="library")
+    collect_repo_by_language("java", {"import com.openai.client.OpenAIClient;":"OpenAI", "import com.openai.client.*;":"OpenAI"
+
+    }, suffix="library")
 
     # Java LLM model usage
     collect_repo_by_language("java", {}, suffix="model")
