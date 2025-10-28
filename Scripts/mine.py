@@ -143,6 +143,8 @@ def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""
 
 
 if __name__ == "__main__":
+    with open("model_keyword_dict.json", "r") as f:
+        model_keyword_dict = json.load(f)
 
     # Python LLM usage
     collect_repo_by_language(
@@ -157,7 +159,6 @@ if __name__ == "__main__":
             "import xai_sdk.Client": "xAI",
             "from llama_api_client import LlamaAPIClient": "Meta",
             "import llama_api_client.LlamaAPIClient": "Meta",
-            "from meta_ai_api import MetaAI": "Meta",
             "from mistralai import Mistral": "Mistral",
             "import mistralai.Mistral": "Mistral",
         },
@@ -165,28 +166,30 @@ if __name__ == "__main__":
     )
 
     # Python LLM model usage
-    collect_repo_by_language("python", {
-        
-    }, suffix="model")
+    collect_repo_by_language("python", model_keyword_dict, suffix="model")
 
     # Java LLM usage
     collect_repo_by_language(
         "java",
         {
-            "import com.openai": "OpenAI",
-            "import com.google": "Google",
-            "import com.anthropic": "Anthropic",
-            "import com.meta": "Meta", # per xAI e Minstral non ho trovato solo third parties SDKs
-    }, suffix="library")
+            "import com.openai.client.OpenAIClient;": "OpenAI",
+            "import com.openai.client.*;": "OpenAI",
+            "import com.google.genai.Client;": "Google",
+            "import com.google.genai.*;": "Google",
+            "import com.anthropic.client.AnthropicClient;": "Anthropic",
+            "import com.anthropic.client.*;": "Anthropic",
+        },
+        suffix="library",
+    )
 
     # Java LLM model usage
-    collect_repo_by_language("java", {}, suffix="model")
+    collect_repo_by_language("java", model_keyword_dict, suffix="model")
 
     # Javascript LLM usage
     collect_repo_by_language("javascript", {}, suffix="library")
 
     # Javascript LLM model usage
-    collect_repo_by_language("javascript", {}, suffix="model")
+    collect_repo_by_language("javascript", model_keyword_dict, suffix="model")
 
     # Go LLM usage
     collect_repo_by_language("go", {
@@ -200,10 +203,10 @@ if __name__ == "__main__":
     }, suffix="library")
 
     # Go LLM model usage
-    collect_repo_by_language("go", {}, suffix="model")
+    collect_repo_by_language("go", model_keyword_dict, suffix="model")
 
     # C# LLM usage
     collect_repo_by_language("csharp", {}, suffix="library")
 
     # C# LLM model usage
-    collect_repo_by_language("csharp", {}, suffix="model")
+    collect_repo_by_language("csharp", model_keyword_dict, suffix="model")
