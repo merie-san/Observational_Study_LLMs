@@ -185,28 +185,33 @@ if __name__ == "__main__":
     # Java LLM model usage
     collect_repo_by_language("java", model_keyword_dict, suffix="model")
 
-    # Javascript LLM usage
-    collect_repo_by_language("javascript", {}, suffix="library")
-
-    # Javascript LLM model usage
-    collect_repo_by_language("javascript", model_keyword_dict, suffix="model")
-
     # Go LLM usage
-    collect_repo_by_language("go", {
-        "github.com/openai/openai-go": "OpenAI",
-        "google.golang.org/genai": "Google",
-        "github.com/anthropics": "Anthropic",
-        "github.com/liushuangls/go-anthropic": "Go-anthropic",
-        'anthropic "github.com/adamchol/go-anthropic-sdk"': "Go-anthropic",
-        "github.com/gage-technologies/mistral-go": "Mistral",
-
-    }, suffix="library")
+    collect_repo_by_language(
+        "go",
+        {
+            "github.com/openai/openai-go": "OpenAI",
+            "google.golang.org/genai": "Google",
+            "github.com/anthropics": "Anthropic",
+            "github.com/liushuangls/go-anthropic": "Go-anthropic",
+            'anthropic "github.com/adamchol/go-anthropic-sdk"': "Go-anthropic",
+            "github.com/gage-technologies/mistral-go": "Mistral",
+        },
+        suffix="library",
+    )
 
     # Go LLM model usage
     collect_repo_by_language("go", model_keyword_dict, suffix="model")
 
     # C# LLM usage
-    collect_repo_by_language("csharp", {}, suffix="library")
+    collect_repo_by_language(
+        "csharp",
+        {
+            "using OpenAI": "OpenAI",
+            "using Anthropic": "Anthropic",
+            "using LLama": "Meta",
+        },
+        suffix="library",
+    )
 
     # C# LLM model usage
     collect_repo_by_language("csharp", model_keyword_dict, suffix="model")
