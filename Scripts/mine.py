@@ -196,8 +196,8 @@ if __name__ == "__main__":
         "github.com/openai/openai-go": "OpenAI",
         "google.golang.org/genai": "Google",
         "github.com/anthropics": "Anthropic",
-        "github.com/liushuangls/go-anthropic": "Anthropic",
-        'anthropic "github.com/adamchol/go-anthropic-sdk"': "Anthropic",
+        "github.com/liushuangls/go-anthropic": "Go-anthropic",
+        'anthropic "github.com/adamchol/go-anthropic-sdk"': "Go-anthropic",
         "github.com/gage-technologies/mistral-go": "Mistral",
 
     }, suffix="library")

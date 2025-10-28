@@ -3,7 +3,6 @@ from openai import OpenAI
 from mistralai import Mistral
 from google import genai
 import anthropic
-from xai_sdk import Client
 import json
 
 STARTING_MODELS_OPENAI = [

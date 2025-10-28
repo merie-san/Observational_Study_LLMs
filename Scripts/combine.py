@@ -36,6 +36,9 @@ def combine(
     repos_with_library_but_no_model_set = repos_with_llm_library_set.difference(
         repos_with_llm_model_set
     )
+    repos_with_model_but_no_library_set = repos_with_llm_model_set.difference(
+        repos_with_llm_library_set
+    )
 
     combined_repos = []
     for repo_name in possible_repos_with_library_and_model_set:
@@ -81,6 +84,18 @@ def combine(
         }
         combined_repo["tags"] += [
             f"{lib}_unknown_model" for lib in repo_lib_side.labels.keys()
+        ]
+        combined_repos.append(combined_repo)
+
+    for repo_name in repos_with_model_but_no_library_set:
+        repo_model_side = repos_with_llm_model_dict[repo_name]
+        combined_repo = {
+            "fullname": repo_name,
+            "html_url": repo_model_side.html_url,
+            "tags": [],
+        }
+        combined_repo["tags"] += [
+            f"unknown_lib_{model}" for model in repo_model_side.labels.keys()
         ]
         combined_repos.append(combined_repo)
 
