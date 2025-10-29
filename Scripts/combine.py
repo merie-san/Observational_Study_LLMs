@@ -56,16 +56,19 @@ def combine(
                 if lib in repo_lib_side.labels:
                     if model_files.intersection(repo_lib_side.labels[lib]):
                         combined_repo["tags"].append(f"{lib}_{model}")
+                        print(
+                            f"Added repo {repo_name} with lib-model pair: {lib}-{model}"
+                        )
                         break
 
         if combined_repo["tags"]:
             combined_repos.append(combined_repo)
         else:
             combined_repo["tags"] = [
-                f"{lib}_unknown_model" for lib in repo_lib_side.labels.keys()
-            ]
+                f"{lib}" for lib in repo_lib_side.labels.keys()
+            ] + [f"{model}" for model in repo_mod_side.labels.keys()]
             combined_repos.append(combined_repo)
-            print(f"Added repo with no matching lib-model pair: {repo_name}")
+            print(f"Added repo with lib and model in different files: {repo_name}")
 
     for repo_name in repos_with_library_but_no_model_set:
         repo_lib_side = repos_with_llm_library_dict[repo_name]
