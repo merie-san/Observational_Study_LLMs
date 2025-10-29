@@ -1,5 +1,5 @@
 import os
-from openai import OpenAI
+import openai
 from mistralai import Mistral
 from google import genai
 import anthropic
@@ -55,7 +55,7 @@ STARTING_MODELS_MISTRALAI = ["mistral-medium-2508", "magistral-medium-2509"]
 
 
 def list_models():
-    client_openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client_openai = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     openai_models = [
         model.id
         for model in client_openai.models.list()
