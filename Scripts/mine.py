@@ -80,13 +80,12 @@ def retrieve_all(query: str, start_size_delta: int):
                     )
 
                     if response.status_code != 200:
-                        raise Exception(
-                            f"GitHub API request failed with status code {response.status_code}: {response.json().get('message','No message')}"
-                        )
+                        print(f"GitHub API request failed with status code {response.status_code}")
+                        time.sleep(30)
                 else:
-                    raise Exception(
-                        f"GitHub API request failed with status code {response.status_code}: {response.json().get('message','No message')}"
-                    )
+                    if response.status_code != 200:
+                        print(f"GitHub API request failed with status code {response.status_code}")
+                        time.sleep(10)
 
             data = response.json()
             items = data.get("items", [])
@@ -122,24 +121,31 @@ def retrieve_all(query: str, start_size_delta: int):
 
 
 def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""):
-    if not keyword_dict:
-        print(f"No keywords for {language}, skipping.")
-        return
-    repo_dict = {}
-    for keyword, group in keyword_dict.items():
-        print(f"Searching for keyword: {keyword}")
-        for data in retrieve_all(f'language:{language} "{keyword}"', 5):
-            print(
-                f"Found reference of \"{keyword}\" for {language}. repo - {data['full_name']}, file - {data['file_path']}"
-            )
-            full_name = data["full_name"]
-            if full_name not in repo_dict:
-                repo_dict[full_name] = repo(full_name, data["html_url"])
-            repo_dict[full_name].add_file_label(group, data["file_path"])
-    with open(
-        f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json", "w"
-    ) as f:
-        json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
+    try:
+        if not keyword_dict:
+            print(f"No keywords for {language}, skipping.")
+            return
+        repo_dict = {}
+        for keyword, group in keyword_dict.items():
+            print(f"Searching for keyword: {keyword}")
+            for data in retrieve_all(f'language:{language} "{keyword}"', 5):
+                print(
+                    f"Found reference of \"{keyword}\" for {language}. repo - {data['full_name']}, file - {data['file_path']}"
+                )
+                full_name = data["full_name"]
+                if full_name not in repo_dict:
+                    repo_dict[full_name] = repo(full_name, data["html_url"])
+                repo_dict[full_name].add_file_label(group, data["file_path"])
+        with open(
+            f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json", "w"
+        ) as f:
+            json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
+    except KeyboardInterrupt as e:
+        print(e)
+        with open(
+            f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json", "w"
+        ) as f:
+            json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
 
 
 if __name__ == "__main__":
@@ -201,17 +207,3 @@ if __name__ == "__main__":
 
     # Go LLM model usage
     collect_repo_by_language("go", model_keyword_dict, suffix="model")
-
-    # C# LLM usage
-    collect_repo_by_language(
-        "csharp",
-        {
-            "using OpenAI": "OpenAI",
-            "using Anthropic": "Anthropic",
-            "using LLama": "Meta",
-        },
-        suffix="library",
-    )
-
-    # C# LLM model usage
-    collect_repo_by_language("csharp", model_keyword_dict, suffix="model")
