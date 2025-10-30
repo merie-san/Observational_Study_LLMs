@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import time
 import requests
 
@@ -121,11 +122,11 @@ def retrieve_all(query: str, start_size_delta: int):
 
 
 def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""):
+    if not keyword_dict:
+        print(f"No keywords for {language}, skipping.")
+        return
+    repo_dict = {}
     try:
-        if not keyword_dict:
-            print(f"No keywords for {language}, skipping.")
-            return
-        repo_dict = {}
         for keyword, group in keyword_dict.items():
             print(f"Searching for keyword: {keyword}")
             for data in retrieve_all(f'language:{language} "{keyword}"', 5):
@@ -137,15 +138,20 @@ def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""
                     repo_dict[full_name] = repo(full_name, data["html_url"])
                 repo_dict[full_name].add_file_label(group, data["file_path"])
         with open(
-            f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json", "w"
+            f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json",
+            "w",
         ) as f:
             json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
     except KeyboardInterrupt as e:
-        print(e)
+        print(
+            f"keyboard interrupt detected, found {len(repo_dict)} repos. Saving intermediary results..."
+        )
         with open(
-            f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json", "w"
+            f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json",
+            "w"
         ) as f:
             json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
+        sys.exit(0)
 
 
 if __name__ == "__main__":

@@ -21,15 +21,6 @@ def combine(
     repos_with_llm_library_set = set(repos_with_llm_library_dict.keys())
     repos_with_llm_model_set = set(repos_with_llm_model_dict.keys())
 
-    if not repos_with_llm_model_set.issubset(repos_with_llm_library_set):
-        print(
-            "Some repos with a model reference are missing a corresponding library import."
-        )
-    else:
-        print(
-            "All repos with a LLM library import also set a LLM model from the provided list."
-        )
-
     possible_repos_with_library_and_model_set = repos_with_llm_library_set.intersection(
         repos_with_llm_model_set
     )
@@ -65,15 +56,19 @@ def combine(
                 if lib in repo_lib_side.labels:
                     if model_files.intersection(repo_lib_side.labels[lib]):
                         combined_repo["tags"].append(f"{lib}_{model}")
+                        print(
+                            f"Added repo {repo_name} with lib-model pair: {lib}-{model}"
+                        )
                         break
 
         if combined_repo["tags"]:
             combined_repos.append(combined_repo)
         else:
             combined_repo["tags"] = [
-                f"{lib}_unknown_model" for lib in repo_lib_side.labels.keys()
-            ]
+                f"{lib}" for lib in repo_lib_side.labels.keys()
+            ] + [f"{model}" for model in repo_mod_side.labels.keys()]
             combined_repos.append(combined_repo)
+            print(f"Added repo with lib and model in different files: {repo_name}")
 
     for repo_name in repos_with_library_but_no_model_set:
         repo_lib_side = repos_with_llm_library_dict[repo_name]
@@ -86,6 +81,7 @@ def combine(
             f"{lib}_unknown_model" for lib in repo_lib_side.labels.keys()
         ]
         combined_repos.append(combined_repo)
+        print(f"Added repo with lib but no model: {repo_name}")
 
     for repo_name in repos_with_model_but_no_library_set:
         repo_model_side = repos_with_llm_model_dict[repo_name]
@@ -98,6 +94,7 @@ def combine(
             f"unknown_lib_{model}" for model in repo_model_side.labels.keys()
         ]
         combined_repos.append(combined_repo)
+        print(f"Added repo with model but no lib: {repo_name}")
 
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(combined_repos, f, indent=2)
