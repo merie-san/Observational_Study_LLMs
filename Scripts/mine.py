@@ -80,18 +80,8 @@ def retrieve_all(query: str, start_size_delta: int):
                     wait_time = reset_time - current_time + 1
                     print(f"Rate limit exceeded, sleeping {wait_time} seconds...")
                     time.sleep(wait_time)
-
                     print("Resuming requests...")
-                    response = requests.get(
-                        CODE_SEARCH_URL, headers=HEADERS, params=params
-                    )
-
-                    if response.status_code != 200:
-                        print(
-                            f"GitHub API request failed with status code {response.status_code}"
-                        )
-                        time.sleep(3)
-                        continue
+                    continue
                 else:
                     print(
                         f"GitHub API request failed with status code {response.status_code}"
