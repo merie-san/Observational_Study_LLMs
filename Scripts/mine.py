@@ -61,7 +61,12 @@ def retrieve_all(query: str, start_size_delta: int):
         i = 0
         while i < 10:
             params["page"] = i + 1
-            response = requests.get(CODE_SEARCH_URL, headers=HEADERS, params=params)
+            try:
+                response = requests.get(CODE_SEARCH_URL, headers=HEADERS, params=params)
+            except requests.exceptions.RequestException as e:
+                print(f"Requests exception detected: {e}, sleeping for 10 seconds...")
+                time.sleep(10)
+                continue
             if response.status_code == 401:
                 raise Exception(
                     "Unauthorized: Check your GITHUB_TOKEN environment variable."
@@ -88,12 +93,11 @@ def retrieve_all(query: str, start_size_delta: int):
                         time.sleep(3)
                         continue
                 else:
-                    if response.status_code != 200:
-                        print(
-                            f"GitHub API request failed with status code {response.status_code}"
-                        )
-                        time.sleep(3)
-                        continue
+                    print(
+                        f"GitHub API request failed with status code {response.status_code}"
+                    )
+                    time.sleep(3)
+                    continue
 
             data = response.json()
             items = data.get("items", [])
