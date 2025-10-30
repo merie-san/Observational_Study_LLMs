@@ -58,7 +58,8 @@ def retrieve_all(query: str, start_size_delta: int):
         }
 
         request_n = 0
-        for i in range(10):
+        i = 0
+        while i < 10:
             params["page"] = i + 1
             response = requests.get(CODE_SEARCH_URL, headers=HEADERS, params=params)
             if response.status_code == 401:
@@ -81,12 +82,16 @@ def retrieve_all(query: str, start_size_delta: int):
                     )
 
                     if response.status_code != 200:
-                        print(f"GitHub API request failed with status code {response.status_code}")
+                        print(
+                            f"GitHub API request failed with status code {response.status_code}"
+                        )
                         time.sleep(3)
                         continue
                 else:
                     if response.status_code != 200:
-                        print(f"GitHub API request failed with status code {response.status_code}")
+                        print(
+                            f"GitHub API request failed with status code {response.status_code}"
+                        )
                         time.sleep(3)
                         continue
 
@@ -105,6 +110,7 @@ def retrieve_all(query: str, start_size_delta: int):
             request_n += len(items)
             print(f'Retrieved {request_n} results for "query:{params["q"]}" so far...')
             time.sleep(1)
+            i += 1
 
         if request_n >= 1000:
             if size_delta <= 1:
@@ -150,7 +156,7 @@ def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""
         )
         with open(
             f"Data/collected_repos_{language}{"_"+suffix if suffix!="" else ""}.json",
-            "w"
+            "w",
         ) as f:
             json.dump([r.to_dict() for r in repo_dict.values()], f, indent=2)
         sys.exit(0)
@@ -181,37 +187,3 @@ if __name__ == "__main__":
 
     # Python LLM model usage
     collect_repo_by_language("python", model_keyword_dict, suffix="model")
-
-    # Java LLM usage
-    collect_repo_by_language(
-        "java",
-        {
-            "import com.openai.client.OpenAIClient;": "OpenAI",
-            "import com.openai.client.*;": "OpenAI",
-            "import com.google.genai.Client;": "Google",
-            "import com.google.genai.*;": "Google",
-            "import com.anthropic.client.AnthropicClient;": "Anthropic",
-            "import com.anthropic.client.*;": "Anthropic",
-        },
-        suffix="library",
-    )
-
-    # Java LLM model usage
-    collect_repo_by_language("java", model_keyword_dict, suffix="model")
-
-    # Go LLM usage
-    collect_repo_by_language(
-        "go",
-        {
-            "github.com/openai/openai-go": "OpenAI",
-            "google.golang.org/genai": "Google",
-            "github.com/anthropics": "Anthropic",
-            "github.com/liushuangls/go-anthropic": "Go-anthropic",
-            'anthropic "github.com/adamchol/go-anthropic-sdk"': "Go-anthropic",
-            "github.com/gage-technologies/mistral-go": "Mistral",
-        },
-        suffix="library",
-    )
-
-    # Go LLM model usage
-    collect_repo_by_language("go", model_keyword_dict, suffix="model")
