@@ -98,6 +98,8 @@ def retrieve_all(query: str, start_size_delta: int):
             data = response.json()
             items = data.get("items", [])
             if not items:
+                print("Nothing found in this page, skipping to next query...")
+                time.sleep(1)
                 break
             for item in items:
                 repo_v = item.get("repository")
@@ -166,24 +168,36 @@ if __name__ == "__main__":
     with open("model_keyword_dict.json", "r") as f:
         model_keyword_dict = json.load(f)
 
-    # Python LLM usage
+    # Java LLM usage
     collect_repo_by_language(
-        "python",
+        "java",
         {
-            "import openai": "OpenAI",
-            "from google import genai": "Google",
-            "import google.genai": "Google",
-            "import anthropic": "Anthropic",
-            "from anthropic import Anthropic": "Anthropic",
-            "from xai_sdk import Client": "xAI",
-            "import xai_sdk.Client": "xAI",
-            "from llama_api_client import LlamaAPIClient": "Meta",
-            "import llama_api_client.LlamaAPIClient": "Meta",
-            "from mistralai import Mistral": "Mistral",
-            "import mistralai.Mistral": "Mistral",
+            "import com.openai.client.OpenAIClient;": "OpenAI",
+            "import com.openai.client.*;": "OpenAI",
+            "import com.google.genai.Client;": "Google",
+            "import com.google.genai.*;": "Google",
+            "import com.anthropic.client.AnthropicClient;": "Anthropic",
+            "import com.anthropic.client.*;": "Anthropic",
         },
         suffix="library",
     )
 
-    # Python LLM model usage
-    collect_repo_by_language("python", model_keyword_dict, suffix="model")
+    # Java LLM model usage
+    collect_repo_by_language("java", model_keyword_dict, suffix="model")
+
+    # Go LLM usage
+    collect_repo_by_language(
+        "go",
+        {
+            "github.com/openai/openai-go": "OpenAI",
+            "google.golang.org/genai": "Google",
+            "github.com/anthropics": "Anthropic",
+            "github.com/liushuangls/go-anthropic": "Go-anthropic",
+            'anthropic "github.com/adamchol/go-anthropic-sdk"': "Go-anthropic",
+            "github.com/gage-technologies/mistral-go": "Mistral",
+        },
+        suffix="library",
+    )
+
+    # Go LLM model usage
+    collect_repo_by_language("go", model_keyword_dict, suffix="model")
