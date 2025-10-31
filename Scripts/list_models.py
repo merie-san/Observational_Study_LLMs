@@ -120,35 +120,47 @@ def create_model_provider_dict(
     model_to_provider = {}
 
     for model in openai_models:
-        if model in model_to_provider and "openai" not in model_to_provider[model]:
-            model_to_provider[model].append("openai")
+        if (
+            model in model_to_provider
+            and "openai" not in model_to_provider[f'"{model}"']
+        ):
+            model_to_provider[f'"{model}"'].append("openai")
         else:
-            model_to_provider[model] = ["openai"]
+            model_to_provider[f'"{model}"'] = ["openai"]
     for model in gemini_models:
-        if model in model_to_provider and "google" not in model_to_provider[model]:
-            model_to_provider[model].append("google")
+        if (
+            model in model_to_provider
+            and "google" not in model_to_provider[f'"{model}"']
+        ):
+            model_to_provider[f'"{model}"'].append("google")
         else:
-            model_to_provider[model] = ["google"]
+            model_to_provider[f'"{model}"'] = ["google"]
     for model in mistral_models:
-        if model in model_to_provider and "mistral" not in model_to_provider[model]:
-            model_to_provider[model].append("mistral")
+        if (
+            model in model_to_provider
+            and "mistral" not in model_to_provider[f'"{model}"']
+        ):
+            model_to_provider[f'"{model}"'].append("mistral")
         else:
-            model_to_provider[model] = ["mistral"]
+            model_to_provider[f'"{model}"'] = ["mistral"]
     for model in anthropic_models:
-        if model in model_to_provider and "anthropic" not in model_to_provider[model]:
-            model_to_provider[model].append("anthropic")
+        if (
+            model in model_to_provider
+            and "anthropic" not in model_to_provider[f'"{model}"']
+        ):
+            model_to_provider[f'"{model}"'].append("anthropic")
         else:
-            model_to_provider[model] = ["anthropic"]
+            model_to_provider[f'"{model}"'] = ["anthropic"]
     for model in xai_models:
-        if model in model_to_provider and "xai" not in model_to_provider[model]:
-            model_to_provider[model].append("xai")
+        if model in model_to_provider and "xai" not in model_to_provider[f'"{model}"']:
+            model_to_provider[f'"{model}"'].append("xai")
         else:
-            model_to_provider[model] = ["xai"]
+            model_to_provider[f'"{model}"'] = ["xai"]
     for model in meta_models:
-        if model in model_to_provider and "meta" not in model_to_provider[model]:
-            model_to_provider[model].append("meta")
+        if model in model_to_provider and "meta" not in model_to_provider[f'"{model}"']:
+            model_to_provider[f'"{model}"'].append("meta")
         else:
-            model_to_provider[model] = ["meta"]
+            model_to_provider[f'"{model}"'] = ["meta"]
 
     return model_to_provider
 
@@ -162,7 +174,7 @@ def create_model_keyword_dict(
     meta_models,
 ):
     model_keyword_dict = {
-        model: model
+        f'"{model}"': model
         for model in openai_models
         + gemini_models
         + mistral_models
