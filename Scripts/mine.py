@@ -45,6 +45,14 @@ class repo:
         return obj
 
 
+def escape_github_query(keyword: str) -> str:
+    import re
+
+    keyword = keyword.replace('"', r"\"")
+    keyword = re.sub(r"([+.\-])", r"\\\1", keyword)
+    return keyword
+
+
 def retrieve_all(query: str, start_size_delta: int):
     """Retrieve all results for a given query by chunking with repo size"""
 
@@ -134,6 +142,7 @@ def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""
     repo_dict = {}
     try:
         for keyword, group in keyword_dict.items():
+            keyword = keyword.replace('"', r"\"")
             print(f"Searching for keyword: {keyword}")
             for data in retrieve_all(f'language:{language} "{keyword}"', 5):
                 print(
@@ -163,25 +172,6 @@ def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""
 if __name__ == "__main__":
     with open("model_keyword_dict.json", "r") as f:
         model_keyword_dict = json.load(f)
-
-    # Python LLM usage
-    collect_repo_by_language(
-        "python",
-        {
-            "import openai": "OpenAI",
-            "from google import genai": "Google",
-            "import google.genai": "Google",
-            "import anthropic": "Anthropic",
-            "from anthropic import Anthropic": "Anthropic",
-            "from xai_sdk import Client": "xAI",
-            "import xai_sdk.Client": "xAI",
-            "from llama_api_client import LlamaAPIClient": "Meta",
-            "import llama_api_client.LlamaAPIClient": "Meta",
-            "from mistralai import Mistral": "Mistral",
-            "import mistralai.Mistral": "Mistral",
-        },
-        suffix="library",
-    )
 
     # Python LLM model usage
     collect_repo_by_language("python", model_keyword_dict, suffix="model")
