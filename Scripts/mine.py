@@ -101,7 +101,7 @@ def retrieve_all(query: str, start_size_delta: int):
             items = data.get("items", [])
             if not items:
                 print(
-                    f'Nothing found in page {i} for "query:{params["q"]}", skipping to next query...'
+                    f'Nothing found in page {i} for query: {params["q"]}, skipping to next query...'
                 )
                 time.sleep(1)
                 break
@@ -114,7 +114,13 @@ def retrieve_all(query: str, start_size_delta: int):
                         "file_path": item.get("path"),
                     }
             request_n += len(items)
-            print(f'Retrieved {request_n} results for "query:{params["q"]}" so far...')
+            if len(items) < 100:
+                print(
+                    f"Retrieved {len(items)} results in page {i} for query:{params["q"]}, skipping to next query..."
+                )
+                time.sleep(1)
+                break
+            print(f'Retrieved {request_n} results for query: {params["q"]} so far...')
             time.sleep(1)
             i += 1
 
@@ -127,12 +133,12 @@ def retrieve_all(query: str, start_size_delta: int):
                 size_delta = int(size_delta / 2)
                 continue
         curr_size += size_delta
-        if request_n > 600 and size_delta > 1:
+        if request_n > 900 and size_delta > 1:
             size_delta = int(size_delta / 2)
-        elif request_n < 300:
-            size_delta += 1
+        elif request_n < 500:
+            size_delta *= 1.1
         elif request_n < 100:
-            size_delta += 5
+            size_delta *= 2
 
 
 def collect_repo_by_language(language: str, keyword_dict: dict, suffix: str = ""):
