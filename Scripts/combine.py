@@ -44,8 +44,7 @@ def combine(
         for model, model_files in repo_mod_side.labels.items():
 
             if model not in model_library_map:
-                raise ValueError(f"Model {model} not in model_library_map")
-
+                continue
             possible_libraries = model_library_map[model]
             if not isinstance(possible_libraries, list):
                 raise ValueError(
