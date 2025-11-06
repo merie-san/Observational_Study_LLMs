@@ -122,45 +122,45 @@ def create_model_provider_dict(
     for model in openai_models:
         if (
             model in model_to_provider
-            and "openai" not in model_to_provider[f"{model}"]
+            and "OpenAI" not in model_to_provider[f"{model}"]
         ):
-            model_to_provider[f"{model}"].append("openai")
+            model_to_provider[f"{model}"].append("OpenAI")
         else:
-            model_to_provider[f"{model}"] = ["openai"]
+            model_to_provider[f"{model}"] = ["OpenAI"]
     for model in gemini_models:
         if (
             model in model_to_provider
-            and "google" not in model_to_provider[f"{model}"]
+            and "Google" not in model_to_provider[f"{model}"]
         ):
-            model_to_provider[f"{model}"].append("google")
+            model_to_provider[f"{model}"].append("Google")
         else:
-            model_to_provider[f"{model}"] = ["google"]
+            model_to_provider[f"{model}"] = ["Google"]
     for model in mistral_models:
         if (
             model in model_to_provider
-            and "mistral" not in model_to_provider[f"{model}"]
+            and "Mistral" not in model_to_provider[f"{model}"]
         ):
-            model_to_provider[f"{model}"].append("mistral")
+            model_to_provider[f"{model}"].append("Mistral")
         else:
-            model_to_provider[f"{model}"] = ["mistral"]
+            model_to_provider[f"{model}"] = ["Mistral"]
     for model in anthropic_models:
         if (
             model in model_to_provider
-            and "anthropic" not in model_to_provider[f"{model}"]
+            and "Anthropic" not in model_to_provider[f"{model}"]
         ):
-            model_to_provider[f"{model}"].append("anthropic")
+            model_to_provider[f"{model}"].append("Anthropic")
         else:
-            model_to_provider[f"{model}"] = ["anthropic"]
+            model_to_provider[f"{model}"] = ["Anthropic"]
     for model in xai_models:
-        if model in model_to_provider and "xai" not in model_to_provider[f"{model}"]:
-            model_to_provider[f"{model}"].append("xai")
+        if model in model_to_provider and "xAI" not in model_to_provider[f"{model}"]:
+            model_to_provider[f"{model}"].append("xAI")
         else:
-            model_to_provider[f"{model}"] = ["xai"]
+            model_to_provider[f"{model}"] = ["xAI"]
     for model in meta_models:
-        if model in model_to_provider and "meta" not in model_to_provider[f"{model}"]:
-            model_to_provider[f"{model}"].append("meta")
+        if model in model_to_provider and "Meta" not in model_to_provider[f"{model}"]:
+            model_to_provider[f"{model}"].append("Meta")
         else:
-            model_to_provider[f"{model}"] = ["meta"]
+            model_to_provider[f"{model}"] = ["Meta"]
 
     return model_to_provider
 

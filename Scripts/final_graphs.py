@@ -1,0 +1,78 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import json
+from datetime import datetime
+
+
+def show_library_imports(file_path: str, suffix):
+    provider_dict = {"OpenAI": 0, "xAI": 0, "Anthropic": 0, "Mistral": 0, "Google": 0}
+    with open(file_path, "r") as f:
+        dicts = json.load(f)
+        for dict in dicts:
+            for tag in dict["tags"]:
+                if "OpenAI" in tag:
+                    provider_dict["OpenAI"] += 1
+                elif "xAI" in tag:
+                    provider_dict["xAI"] += 1
+                elif "Anthropic" in tag:
+                    provider_dict["Anthropic"] += 1
+                elif "Mistral" in tag:
+                    provider_dict["Mistral"] += 1
+                elif "Google" in tag:
+                    provider_dict["Google"] += 1
+    labels = ["openai", "anthropic", "mistral", "google", "xai"]
+    x = np.arange(len(labels))
+    values = [
+        provider_dict["OpenAI"],
+        provider_dict["Anthropic"],
+        provider_dict["Mistral"],
+        provider_dict["Google"],
+        provider_dict["xAI"],
+    ]
+    plt.figure(figsize=(12, 6))
+    plt.bar(x, values, color="skyblue", label="Number of repos for each provider")
+    plt.yscale("log")
+    plt.xlabel("Provider")
+    plt.ylabel("Number of repos")
+    plt.title(f"Provider of LLM library by number of repos")
+    plt.xticks(x, labels)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(f"../Figures/llm_library_usage_{suffix}.png")
+    plt.close()
+
+
+def show_model_frequency(file_path, suffix):
+    models = []
+    with open("model_provider_dict.json", "r") as f:
+        dict_json = json.load(f)
+        models = dict_json.keys()
+    model_counts = {}
+    for model in models:
+        model_counts[model] = 0
+    with open(file_path, "r") as f:
+        dicts = json.load(f)
+        for dict in dicts:
+            for tag in dict["tags"]:
+                for model in models:
+                    if model in tag:
+                        model_counts[model] += 1
+    count_array = []
+    for count in model_counts.values():
+        count_array.append(count)
+    count_array.sort(reverse=True)
+    plt.figure(figsize=(12, 6))
+    x = np.arange(len(count_array))
+    plt.plot(x, count_array, color="skyblue", label="number of repo for each model")
+    plt.xlabel("Models ordered by how much they are referenced")
+    plt.ylabel("Number of repos")
+    plt.title(f"LLM Model by number of repos")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(f"../Figures/llm_model_usage_{suffix}.png")
+    plt.close()
+
+
+if __name__ == "__main__":
+    show_library_imports("Data/collected_repos_python.json", "python")
+    show_model_frequency("Data/collected_repos_python.json", "python")
