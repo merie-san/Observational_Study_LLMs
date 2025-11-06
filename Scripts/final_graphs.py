@@ -69,6 +69,11 @@ def show_model_frequency(file_path, suffix):
     plt.title(f"LLM Model by number of repos")
     plt.legend()
     plt.tight_layout()
+    num_ticks = 5
+    tick_positions = np.linspace(0, len(count_array) - 1, num_ticks, dtype=int)
+    tick_labels = [f"Top {pos + 1}" for pos in tick_positions]
+
+    plt.xticks(tick_positions, tick_labels)
     plt.savefig(f"../Figures/llm_model_usage_{suffix}.png")
     plt.close()
 
