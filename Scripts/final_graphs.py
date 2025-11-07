@@ -143,7 +143,7 @@ def show_library_most_pop_model(file_path_most_pop_models, data, suffix):
                     result_dicts.append(dict_value)
                     break
     with open(f"Data/reduced_repos_{suffix}.json", "w") as f:
-        json.dump(result_dicts, f, indent=2 )
+        json.dump(result_dicts, f, indent=2)
 
     provider_list = ["OpenAI", "xAI", "Anthropic", "Mistral", "Google", "unknown_lib"]
     count_dict = {}
@@ -158,9 +158,14 @@ def show_library_most_pop_model(file_path_most_pop_models, data, suffix):
         for tag in dict_value["tags"]:
             if "_" in tag:
                 res = tag.split("_")
-                if res[1] in pop_models:
-                    count_dict[res[1]]["tot"] += 1
-                    count_dict[res[1]][res[0]] += 1
+                if len(res) == 2:
+                    if res[1] in pop_models:
+                        count_dict[res[1]]["tot"] += 1
+                        count_dict[res[1]][res[0]] += 1
+                elif len(res) == 3:
+                    if res[2] in pop_models:
+                        count_dict[res[2]]["tot"] += 1
+                        count_dict[res[2]]["unknown_lib"] += 1
             else:
                 if tag in provider_list:
                     provider_encountered.append(tag)
@@ -170,6 +175,10 @@ def show_library_most_pop_model(file_path_most_pop_models, data, suffix):
             for model in models_encountered:
                 count_dict[model]["tot"] += 1
                 count_dict[model][provider_encountered[0]] += 1
+        elif models_encountered:
+            for model in models_encountered:
+                count_dict[model]["tot"] += 1
+                count_dict[model]["unknown_lib"] += 1
 
     ratios = {provider: [] for provider in provider_list}
 
