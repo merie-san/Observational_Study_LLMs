@@ -73,10 +73,12 @@ def show_model_frequency(file_path, suffix):
     count_array.sort(reverse=True)
     total_count = np.sum(count_array)
     top_20p = 0
-    for i in range(int(len(count_array) * 0.2)):
+    top_n = int(len(count_array) * 0.2)
+    for i in range(top_n):
         top_20p += count_array[i]
     plt.figure(figsize=(12, 6))
     x = np.arange(len(count_array))
+    plt.fill_between(x[:top_n], count_array[:top_n], color="orange", alpha=0.3, label="Top 20%")
     plt.plot(x, count_array, color="skyblue", label="number of repo for each model")
     plt.xlabel("Models ordered by how much they are referenced")
     plt.ylabel("Number of repos")
