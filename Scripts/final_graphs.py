@@ -5,7 +5,14 @@ from datetime import datetime
 
 
 def show_library_imports(file_path: str, suffix):
-    provider_dict = {"OpenAI": 0, "xAI": 0, "Anthropic": 0, "Mistral": 0, "Google": 0}
+    provider_dict = {
+        "OpenAI": 0,
+        "xAI": 0,
+        "Anthropic": 0,
+        "Mistral": 0,
+        "Google": 0,
+        "unknown_lib": 0,
+    }
     with open(file_path, "r") as f:
         dicts = json.load(f)
         for dict in dicts:
@@ -20,7 +27,9 @@ def show_library_imports(file_path: str, suffix):
                     provider_dict["Mistral"] += 1
                 elif "Google" in tag:
                     provider_dict["Google"] += 1
-    labels = ["openai", "anthropic", "mistral", "google", "xai"]
+                elif "unknown_lib" in tag:
+                    provider_dict["unknown_lib"] += 1
+    labels = ["openai", "anthropic", "mistral", "google", "xai", "other"]
     x = np.arange(len(labels))
     values = [
         provider_dict["OpenAI"],
@@ -28,6 +37,7 @@ def show_library_imports(file_path: str, suffix):
         provider_dict["Mistral"],
         provider_dict["Google"],
         provider_dict["xAI"],
+        provider_dict["unknown_lib"],
     ]
     plt.figure(figsize=(12, 6))
     plt.bar(x, values, color="skyblue", label="Number of repos for each provider")
@@ -61,6 +71,10 @@ def show_model_frequency(file_path, suffix):
     for count in model_counts.values():
         count_array.append(count)
     count_array.sort(reverse=True)
+    total_count = np.sum(count_array)
+    top_20p = 0
+    for i in range(int(len(count_array) * 0.2)):
+        top_20p += count_array[i]
     plt.figure(figsize=(12, 6))
     x = np.arange(len(count_array))
     plt.plot(x, count_array, color="skyblue", label="number of repo for each model")
@@ -68,6 +82,15 @@ def show_model_frequency(file_path, suffix):
     plt.ylabel("Number of repos")
     plt.title(f"LLM Model by number of repos")
     plt.legend()
+    plt.text(
+        0.95,
+        0.95,
+        f"Top 20% of models make {top_20p/total_count:.1%} of total usage",
+        transform=plt.gca().transAxes,
+        ha="right",
+        va="top",
+        fontsize=12,
+    )
     plt.tight_layout()
     num_ticks = 5
     tick_positions = np.linspace(0, len(count_array) - 1, num_ticks, dtype=int)
@@ -81,3 +104,7 @@ def show_model_frequency(file_path, suffix):
 if __name__ == "__main__":
     show_library_imports("Data/collected_repos_python.json", "python")
     show_model_frequency("Data/collected_repos_python.json", "python")
+    show_library_imports("Data/collected_repos_java.json", "java")
+    show_model_frequency("Data/collected_repos_java.json", "java")
+    show_library_imports("Data/collected_repos_go.json", "go")
+    show_model_frequency("Data/collected_repos_go.json", "go")

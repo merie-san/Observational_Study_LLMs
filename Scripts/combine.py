@@ -103,8 +103,14 @@ if __name__ == "__main__":
     with open("model_provider_dict.json", "r") as f:
         model_library_map = json.load(f)
         combine(
-            library_data_path="Data/collected_repos_python_library.json",
-            model_data_path="Data/collected_repos_python_model.json",
-            output_path="Data/collected_repos_python.json",
+            library_data_path="Data/collected_repos_java_library.json",
+            model_data_path="Data/collected_repos_java_model.json",
+            output_path="Data/collected_repos_java.json",
+            model_library_map=model_library_map,
+        )
+        combine(
+            library_data_path="Data/collected_repos_go_library.json",
+            model_data_path="Data/collected_repos_go_model.json",
+            output_path="Data/collected_repos_go.json",
             model_library_map=model_library_map,
         )
