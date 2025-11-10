@@ -195,7 +195,7 @@ def show_library_most_pop_model(file_path_most_pop_models, data, suffix):
 
     plt.figure(figsize=(14, 6))
 
-    color_list = ["skyblue", "limegreen", "tomato", "c", "m", "0.5"]
+    color_list = ["skyblue", "limegreen", "tomato", "c", "m", "0.3"]
 
     for i in range(len(provider_list)):
         plt.bar(
