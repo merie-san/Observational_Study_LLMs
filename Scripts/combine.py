@@ -55,9 +55,6 @@ def combine(
                 if lib in repo_lib_side.labels:
                     if model_files.intersection(repo_lib_side.labels[lib]):
                         combined_repo["tags"].append(f"{lib}_{model}")
-                        print(
-                            f"Added repo {repo_name} with lib-model pair: {lib}-{model}"
-                        )
                         break
 
         if combined_repo["tags"]:
@@ -67,7 +64,6 @@ def combine(
                 f"{lib}" for lib in repo_lib_side.labels.keys()
             ] + [f"{model}" for model in repo_mod_side.labels.keys()]
             combined_repos.append(combined_repo)
-            print(f"Added repo with lib and model in different files: {repo_name}")
 
     for repo_name in repos_with_library_but_no_model_set:
         repo_lib_side = repos_with_llm_library_dict[repo_name]
@@ -80,7 +76,6 @@ def combine(
             f"{lib}_unknown_model" for lib in repo_lib_side.labels.keys()
         ]
         combined_repos.append(combined_repo)
-        print(f"Added repo with lib but no model: {repo_name}")
 
     for repo_name in repos_with_model_but_no_library_set:
         repo_model_side = repos_with_llm_model_dict[repo_name]
@@ -93,7 +88,8 @@ def combine(
             f"unknown_lib_{model}" for model in repo_model_side.labels.keys()
         ]
         combined_repos.append(combined_repo)
-        print(f"Added repo with model but no lib: {repo_name}")
+
+    print(f"{output_path} has length:{len(combined_repos)}")
 
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(combined_repos, f, indent=2)
@@ -102,6 +98,12 @@ def combine(
 if __name__ == "__main__":
     with open("model_provider_dict.json", "r") as f:
         model_library_map = json.load(f)
+        combine(
+            library_data_path="Data/collected_repos_python_library.json",
+            model_data_path="Data/collected_repos_python_model.json",
+            output_path="Data/collected_repos_python.json",
+            model_library_map=model_library_map,
+        )
         combine(
             library_data_path="Data/collected_repos_java_library.json",
             model_data_path="Data/collected_repos_java_model.json",
