@@ -9,7 +9,7 @@ Use this project to understand the evolving landscape of LLM adoption and inform
 
 Order of execution:
 
-list_models.py -> mine.py -> combine.py -> repo_search.py -> (various graph maker files).py
+keyword_search.py -> list_models.py -> library_model_search.py -> combine.py ->  attribute_search.py -> (graph scripts) -> (statistic scripts)
 
 
 This project has been made for the Software Architecture Methodologies course of the Università degli Studi di Firenze.
