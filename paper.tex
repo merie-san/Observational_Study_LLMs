@@ -54,7 +54,7 @@ twoside, % Two side traditional mode where headers and footers change between od
 % Full-width abstract
 \renewcommand{\maketitlehookd}{%
 	\begin{abstract}
-		\noindent The current landscape of software engineering is increasingly shaped by the adoption of Large Language Models (LLMs), both as tools that support the development process and as integrated components of final applications. Understanding how and when developers apply these models is therefore essential. This study surveys public GitHub repositories to identify the LLM technologies they employ, if any, and to collect additional metrics that support a broader understanding of the popularity and distribution of different LLM technologies, their areas of application, and their correlation with other project characteristics. We will collect data using GitHub's repository and code search functionality through the REST APIs. To have a first understanding of the popularity of LLM technology throughout the years, we collected metadata about the most popular GitHub repositories for each month from 2022 until October 2025. Then, to have a more detailed view, we used code mining to collect data regarding two aspects of a repository relative to the use of LLM tech: the SDK and the model used. The data will be collected through two mining sessions (one for the SDK and one for the model) by code search up to files of 5MB in size. The data is then combined to identify frequent SDK-model pairs and other interesting metrics of analysis through statistical methods.   
+		\noindent The increasing integration of Large Language Models (LLMs) in software engineering, both as development tools and as components of deployed systems, raises the need to understand how developers adopt these technologies in real-world projects. This study analyzes a large set of public GitHub repositories to identify which LLM technologies they employ and how their usage correlates with other project characteristics. We combine repository metadata with code-search based mining to detect both the SDKs and the models used, enabling an examination of technology popularity, application domains, and common SDK–model combinations. Our dataset also includes monthly snapshots of the most popular repositories from 2022 to 2025. Using statistical analysis, we investigate trends in LLM adoption and explore relationships between the presence of LLM components and repository attributes such as size and activity. The results provide an empirical characterization of the current LLM landscape in open-source software development.
 		
 		% TO DO - results and conclusion.
 	\end{abstract}
@@ -72,7 +72,7 @@ twoside, % Two side traditional mode where headers and footers change between od
 	
 	\section{Introduction}
 	
-	Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHub repositories. Many different languages can be used to do this analysis, but we decided to only consider the following languages:
+Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHub repositories. Many different languages can be used to do this analysis, but we decided to only consider the following languages:
 	
 	\begin{itemize}
 		\item \textbf{Python}, the most popular language for LLM inference through programmatic API.
@@ -93,12 +93,29 @@ twoside, % Two side traditional mode where headers and footers change between od
 	
 	The list of available models for each maker was obtained by visiting the official site and combining results there with the return of a query to the API of the maker when the call was free.
 	
-	To reach our goal, we first analyzed for each language the evolution of the percentage of repositories containing LLM-adjacent words in their topic, description, or title. From the data we collected, we performed several analyses, such as which language is the most popular for the development of LLM-integrated applications or which repository metrics are more correlated. Starting from this analysis, we conducted a deeper research on public repositories on GitHub by using code search to retrieve all instances of relevant SDK import or model reference. The collected data is combined to obtain SDK-model pairs that can be analyzed and used to derive insights for our study. We then sampled a set of representative repositories from this exhaustive list to apply statistical methods and infer properties of the sampled population.
+	To reach our goal, we first analyzed for each language the evolution of the percentage of repositories containing LLM-adjacent words in their topic, description, or title. From the data we collected, we performed several analyses, such as which language is the most popular for the development of LLM-integrated applications or which repository metrics are more correlated. Starting from this analysis, we conducted a deeper research on public repositories on GitHub by using code search to retrieve all instances of relevant SDK import or model reference. The collected data is combined to obtain SDK-model pairs that can be analyzed and used to derive insights for our study. We then sampled a set of representative repositories from this exhaustive list to apply statistical methods and infer properties of the sampled population.\\
+	Our empirical analysis leads to several key findings:
+	\begin{itemize}
+		\item \textbf{Rapid growth of LLM-related projects}, since the introduction of LLMs to public usage in 2022 the proportion of LLM-related repositories among the most-starred projects increased significantly across all languages, with \textit{Python} showing the steepest rise, from a 30\% to a stable 80\% reached in 2023. The other languages also follow a similar upward trend but not as steep.
+		\item \textbf{Python's dominance over LLM-integrated development}, \textit{Python} accounts for over 260,000 repositories, compared to 8,639 for \textit{Java} and 5,511 for \textit{Go} in our combined dataset, making it two orders of magnitude more widely used for LLM applications.
+		\item \textbf{OpenAI and Google SDKs are the most adopted among official libraries}, although third-party libraries remain popular across all languages. For \textit{Python}, official SDKs show much stronger adoption than in \textit{Java} and \textit{Go}, where third-party libraries remains the most utilized.
+		\item \textbf{A small set of LLM models accounts for most real-world usage}, Across languages, the top 20\% most-frequent models constitute over 80\% of model references, with \textit{OpenAI} models dominating and \textit{Google} models appearing as secondary but significant contributors.
+		\item \textbf{Common usage patterns align with conversational, generative, and agentic workflows}, Based on keyword-based classification, LLMs in public repositories are primarily used for conversational agents, content generation, and multi-step agentic orchestration, with fewer repositories employing retrieval-augmented pipelines or domain-specific applications.
+		\item \textbf{Repository-level attributes show interesting correlations}, Spearman correlation analyses reveal distinct patterns across languages. In \textit{Python}, open issues correlate strongly with fork counts, while in \textit{Java} and \textbf{Go} stars correlate more with open issues. Statistical hypothesis testing further shows that \textit{Python} LLM repositories have significantly fewer stars on average than \textit{Java} and \textit{Go} repositories (p < 0.05 in both one-tailed Welch t-tests), suggesting lower visibility or more experimental project character.
+	\end{itemize}
 	
-	% TODO:
-	%   ADD THE MAIN RESULTS OF THE STUDY
-	%   ADD MAIN CONTRIBUTION (HOW TO USE THE PAPER)
-	%   ADD THE STRUCTURE OF THE PAPER
+	These findings paint a clear picture of the current LLM ecosystem where \textit{Python} is the central hub of LLM-integrated development, \textit{OpenAI} remains the dominant provider, and real-world usage tends to use a relatively narrow set of models and application patterns.
+	
+	The remainder of this paper is organized as follows:
+	\begin{itemize}
+		\item \textbf{Section 2, Related Work}: Presents the related work, positioning our study within the broader landscape of LLM-integrated software engineering research.
+		\item \textbf{Section 3, Experiment Design \& Execution}: Details our experimental design, outlining the research questions and the metrics used to answer them, and describes the execution of the experiment, including data collection strategies for keyword-search, library-search, model-search, and repository attribute extraction.
+		\item \textbf{Section 4, Data Processing \& Cleanup}: Discusses the preprocessing and cleaning steps applied to the dataset.
+		\item \textbf{Section 5, Results}: Reports the results for each research question, covering popularity trends, language and SDK distribution, model usage analysis, usage patterns, and repository attribute correlations.
+		\item \textbf{Section 6, Threats to Validity}: Describes the various threats that are present in this research and provides some suggestions on how to mitigate them.
+		\item \textbf{Section 7, Discussion}: Provides a discussion and interpretation of the results, outlining limitations and implications for future research.
+		\item \textbf{Section 8, Conclusion}: Concludes the study with a summary of our contributions and opportunities for follow-up investigations.
+	\end{itemize}
 	
 	
 	%------------------------------------------------
