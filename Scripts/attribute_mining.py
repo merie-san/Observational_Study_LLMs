@@ -32,6 +32,8 @@ def github_get(url, headers):
                 print(
                     f"GitHub API request failed with status code {response.status_code}"
                 )
+                if response.status_code == 404:
+                    return None
                 print(response)
                 time.sleep(3)
                 continue
@@ -41,45 +43,63 @@ def github_get(url, headers):
 
 
 def attribute_searching(data_file: str, suffix: str):
+    print("starting " + suffix + "\n")
     with open(data_file, "r") as f:
         data_dicts = json.load(f)
-    sampled_dicts = random.sample(data_dicts, 1000)
+    repeat = True
     responses = []
-    for repo in sampled_dicts:
-        response = github_get(f"{REPOSITORY_URL}/{repo["fullname"]}", headers=HEADERS)
+    while repeat:
+        print("taking a new sample...\n")
+        repeat=False
+        sampled_dicts = random.sample(data_dicts, 500)
+        for repo in sampled_dicts:
+            response = github_get(
+                f"{REPOSITORY_URL}/{repo["fullname"]}", headers=HEADERS
+            )
+            if response:
+                item = response.json()
 
-        item = response.json()
-
-        responses.append(
-            {
-                "id": item.get("id"),
-                "full_name": item.get("full_name"),
-                "html_url": item.get("html_url"),
-                "description": item.get("description"),
-                "language": item.get("language"),
-                "created_at": item.get("created_at"),
-                "stargazers_count": item.get("stargazers_count"),
-                "open_issues_count": item.get("open_issues_count"),
-                "size": item.get("size") / 1000,
-                "topics": item.get("topics", []),
-                "license": (
-                    item.get("license", {}).get("key") if item.get("license") else None
-                ),
-                "owner_login": (item["owner"]["login"] if item.get("owner") else None),
-                "owner_type": (item["owner"]["type"] if item.get("owner") else None),
-                "archived": item.get("archived"),
-                "subscribers_count": item.get("subscribers_count"),
-                "network_count": item.get("network_count"),
-            }
-        )
-        print(
-            f"appended repo {item.get("full_name")} created at {item.get("created_at")}"
-        )
+                responses.append(
+                    {
+                        "id": item.get("id"),
+                        "full_name": item.get("full_name"),
+                        "html_url": item.get("html_url"),
+                        "description": item.get("description"),
+                        "language": item.get("language"),
+                        "created_at": item.get("created_at"),
+                        "stargazers_count": item.get("stargazers_count"),
+                        "open_issues_count": item.get("open_issues_count"),
+                        "size": item.get("size") / 1000,
+                        "topics": item.get("topics", []),
+                        "license": (
+                            item.get("license", {}).get("key")
+                            if item.get("license")
+                            else None
+                        ),
+                        "owner_login": (
+                            item["owner"]["login"] if item.get("owner") else None
+                        ),
+                        "owner_type": (
+                            item["owner"]["type"] if item.get("owner") else None
+                        ),
+                        "archived": item.get("archived"),
+                        "subscribers_count": item.get("subscribers_count"),
+                        "network_count": item.get("network_count"),
+                    }
+                )
+                print(
+                    f"appended repo {item.get("full_name")} created at {item.get("created_at")}"
+                )
+            else:
+                repeat = True
+                break
     with open(f"Data/sampled_repo_{suffix.lower()}.json", "w") as f:
         json.dump(responses, f, ensure_ascii=False, indent=2)
-
+    print("ended " + suffix + "\n")
     return
 
 
 if __name__ == "__main__":
+    attribute_searching("Data/collected_repos_python.json", "python")
+    attribute_searching("Data/collected_repos_java.json", "java")
     attribute_searching("Data/collected_repos_go.json", "go")
