@@ -21,10 +21,10 @@
 %----------------------------------------------------------------------------------------
 
 \documentclass[
-	a4paper, % Paper size, use either a4paper or letterpaper
-	10pt, % Default font size, can also use 11pt or 12pt, although this is not recommended
-	unnumberedsections, % Comment to enable section numbering
-	twoside, % Two side traditional mode where headers and footers change between odd and even pages, comment this option to make them fixed
+a4paper, % Paper size, use either a4paper or letterpaper
+10pt, % Default font size, can also use 11pt or 12pt, although this is not recommended
+unnumberedsections, % Comment to enable section numbering
+twoside, % Two side traditional mode where headers and footers change between odd and even pages, comment this option to make them fixed
 ]{LTJournalArticle}
 
 \addbibresource{paper.bib} % BibLaTeX bibliography file
@@ -54,183 +54,513 @@
 % Full-width abstract
 \renewcommand{\maketitlehookd}{%
 	\begin{abstract}
-		\noindent The current landscape of software engineering is increasingly shaped by the adoption of Large Language Models (LLMs), both as tools that support the development process and as integrated components of final applications. Understanding how and when developers apply these models is therefore essential. This study surveys public GitHub repositories to identify the LLM technologies they employ, if any, and to collect additional metrics that support a broader understanding of the popularity and distribution of different LLM technologies, their areas of application, and their correlation with other project characteristics.
-		% TO DO - add methods, results and conclusion.
+		\noindent The increasing integration of Large Language Models (LLMs) in software engineering, both as development tools and as components of deployed systems, raises the need to understand how developers adopt these technologies in real-world projects. This study analyzes a large set of public GitHub repositories to identify which LLM technologies they employ and how their usage correlates with other project characteristics. We combine repository metadata with code-search based mining to detect both the SDKs and the models used, enabling an examination of technology popularity, application domains, and common SDK–model combinations. Our dataset also includes monthly snapshots of the most popular repositories from 2022 to 2025. Using statistical analysis, we investigate trends in LLM adoption and explore relationships between the presence of LLM components and repository attributes such as size and activity. The results provide an empirical characterization of the current LLM landscape in open-source software development.
+		
 	\end{abstract}
 }
 
 %----------------------------------------------------------------------------------------
 
 \begin{document}
+	
+	\maketitle % Output the title section
+	
+	%----------------------------------------------------------------------------------------
+	%	ARTICLE CONTENTS
+	%----------------------------------------------------------------------------------------
+	
+	\section{Introduction}
+	
+Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHub repositories. Many different languages can be used to do this analysis, but we decided to only consider the following languages:
+	
+	\begin{itemize}
+		\item \textbf{Python}, the most popular language for LLM inference through programmatic API.
+		\item \textbf{Java}, a popular high-level language for the development of web applications.
+		\item \textbf{Go}, similar to Java but with a simpler syntax.
+	\end{itemize}
+	
+	We also decided to only consider the official SDK provided by the following makers:
+	
+	\begin{itemize}
+		\item \textbf{OpenAI} 
+		\item \textbf{Anthropic}
+		\item \textbf{Mistral}
+		\item \textbf{Google}
+		\item \textbf{xAI}
+		\item \textbf{Meta}
+	\end{itemize}
+	
+	The list of available models for each maker was obtained by visiting the official site and combining results there with the return of a query to the API of the maker when the call was free.
+	
+	To reach our goal, we first analyzed for each language the evolution of the percentage of repositories containing LLM-adjacent words in their topic, description, or title. From the data we collected, we performed several analyses, such as which language is the most popular for the development of LLM-integrated applications or which repository metrics are more correlated. Starting from this analysis, we conducted a deeper research on public repositories on GitHub by using code search to retrieve all instances of relevant SDK import or model reference. The collected data is combined to obtain SDK-model pairs that can be analyzed and used to derive insights for our study. We then sampled a set of representative repositories from this exhaustive list to apply statistical methods and infer properties of the sampled population.\\
+	Our empirical analysis leads to several key findings:
+	\begin{itemize}
+		\item \textbf{Rapid growth of LLM-related projects}, since the introduction of LLMs to public usage in 2022 the proportion of LLM-related repositories among the most-starred projects increased significantly across all languages, with \textit{Python} showing the steepest rise, from a 30\% to a stable 80\% reached in 2023. The other languages also follow a similar upward trend but not as steep.
+		\item \textbf{Python's dominance over LLM-integrated development}, \textit{Python} accounts for over 260,000 repositories, compared to 8,639 for \textit{Java} and 5,511 for \textit{Go} in our combined dataset, making it two orders of magnitude more widely used for LLM applications.
+		\item \textbf{OpenAI and Google SDKs are the most adopted among official libraries}, although third-party libraries remain popular across all languages. For \textit{Python}, official SDKs show much stronger adoption than in \textit{Java} and \textit{Go}, where third-party libraries remains the most utilized.
+		\item \textbf{A small set of LLM models accounts for most real-world usage}, Across languages, the top 20\% most-frequent models constitute over 80\% of model references, with \textit{OpenAI} models dominating and \textit{Google} models appearing as secondary but significant contributors.
+		\item \textbf{Common usage patterns align with conversational, generative, and agentic workflows}, Based on keyword-based classification, LLMs in public repositories are primarily used for conversational agents, content generation, and multi-step agentic orchestration, with fewer repositories employing retrieval-augmented pipelines or domain-specific applications.
+		\item \textbf{Repository-level attributes show interesting correlations}, Spearman correlation analyses reveal distinct patterns across languages. In \textit{Python}, open issues correlate strongly with fork counts, while in \textit{Java} and \textbf{Go} stars correlate more with open issues. Statistical hypothesis testing further shows that \textit{Python} LLM repositories have significantly fewer stars on average than \textit{Java} and \textit{Go} repositories (p < 0.05 in both one-tailed Welch t-tests), suggesting lower visibility or more experimental project character.
+	\end{itemize}
+	
+	These findings paint a clear picture of the current LLM ecosystem where \textit{Python} is the central hub of LLM-integrated development, \textit{OpenAI} remains the dominant provider, and real-world usage tends to use a relatively narrow set of models and application patterns.
+	
+	The remainder of this paper is organized as follows:
+	\begin{itemize}
+		\item \textbf{Section 2, Related Work}: Presents the related work, positioning our study within the broader landscape of LLM-integrated software engineering research.
+		\item \textbf{Section 3, Experiment Design \& Execution}: Details our experimental design, outlining the research questions and the metrics used to answer them, and describes the execution of the experiment, including data collection strategies for keyword-search, library-search, model-search, and repository attribute extraction.
+		\item \textbf{Section 4, Data Processing \& Cleanup}: Discusses the preprocessing and cleaning steps applied to the dataset.
+		\item \textbf{Section 5, Results}: Reports the results for each research question, covering popularity trends, language and SDK distribution, model usage analysis, usage patterns, and repository attribute correlations.
+		\item \textbf{Section 6, Threats to Validity}: Describes the various threats that are present in this research and provides some suggestions on how to mitigate them.
+		\item \textbf{Section 7, Discussion}: Provides a discussion and interpretation of the results, outlining limitations and implications for future research.
+		\item \textbf{Section 8, Conclusion}: Concludes the study with a summary of our contributions and opportunities for follow-up investigations.
+	\end{itemize}
+	
+	
+	%------------------------------------------------
+	
+	\section{Related Work}
+	
+	The existing literature already includes numerous empirical studies covering a wide range of topics related to Large Language Models (LLMs), such as exploring new domains of application (e.g., assisting in peer review \autocite{zhou-etal-2024-llm}, code understanding \autocite{10.1145/3597503.3639187}, and LLM-as-a-judge scenarios \autocite{gu2025surveyllmasajudge}), as well as studies focused on improving their performance \autocite{NEURIPS2024-71c3451f}. 
+	
+	However, to our knowledge, there have not been many studies on the popularity of different LLM technologies in LLM-integrated software. An important study on the topic of LLM-integrated software \autocite{weber2024largelanguagemodelssoftware} attempts to establish new terminology, concepts, and methods for LLM-integrated application engineering. LLM-integrated application engineering refers to an emerging branch of software engineering that studies LLM-integrated applications, which are software systems that leverage LLMs to provide functionalities that would otherwise be infeasible or require substantial development effort to implement. To this end, the study proposes a structured framework for categorizing and analyzing LLM-integrated applications across various domains. 
+	
+	Another paper on the same topic \autocite{10.1145/3715007} explores LLM-integrated application engineering from the perspective of its challenges. These challenges span different areas, such as prompts, APIs, and plugins, and require developers to navigate unique methodologies and considerations specific to LLM application development. The authors crawled and analyzed approximately 30,000 relevant questions from popular OpenAI developer forums to build a taxonomy of challenges faced by LLM developers and summarized a set of findings and actionable insights. 
+	
+	In summary, we did not find important papers detailing the popularity of various LLM technologies through API usage, but we did find foundational papers on LLM-integrated application development.
+	%------------------------------------------------
+	
+	\section{Experiment Design And Execution}
+	
+	\subsection{Experiment Design}
+	
+	The goal of this study is to investigate the real-world adoption and usage patterns of Large Language Models (LLMs) in public software projects. To achieve this goal, we define the following research questions:
+	
+	\begin{enumerate}
+		\item How has the popularity of LLM-integrated software evolved since the first announcement of ChatGPT in 2022?
+		\item What is the most popular programming language for LLM-integrated software development?
+		\item What is the most popular SDK for LLM-integrated software development?
+		\item Which LLM models are most frequently used for inference in public GitHub projects?
+		\item How are these models being utilized in practice within these repositories?
+		\item What is the average size, number of stars, forks etc. for a LLM-integrated application and how are they correlated?
+	\end{enumerate}
+	
+	To answer these questions, we define the following metrics and data collection strategies:
+	\begin{itemize}
+		\item \textbf{Popularity over time}
+		We will track the presence of LLM-related keywords in repository descriptions, topics, or names among the most-starred public GitHub repositories. This will be done monthly from January 2022 to October 2025. We will calculate the proportion of repositories that match these criteria each month and plot the evolution over time. As result we will build a graph representing the evolution of the proportion of LLM-related repos in the given time interval.
+		
+		\item \textbf{Popular programming languages}  
+		We will identify repositories that include SDK imports or model inference code and aggregate them by programming language. The language with the highest number of such repositories will be considered the most popular for LLM-integrated software development. This requires a method to query and retrieve all relevant repositories effectively (chunking).
+		
+		\item \textbf{Popular SDKs}  
+		For each SDK, we will count the total number of repositories that include its import. The SDK with the highest occurrence will be identified as the most widely adopted.
+		
+		\item \textbf{Popular LLM models}  
+		We will analyze the repositories to detect which models are referenced most frequently, based on model names or API calls for inference.
+		
+		\item \textbf{Usage patterns of LLMs}  
+		We will perform a qualitative analysis of how models are used in these repositories, categorizing usage into common patterns: Conversational, Generation task based, Retrieval-Augmented, Agentic Orchestration, Multimodal or Domain-Specific.
+		
+		\item \textbf{Repository attribute patterns}
+		By randomly sampling five hundred repositories and querying the GitHub endpoint for specific metadata, we hope to estimate through statistical methods the mean of various attributes of LLM-integrated sofwtare like its size or its number of stars. We will lastly produce a table expressing the correlation between these different stats.
+		
+	\end{itemize}
+	
+	By systematically measuring these metrics, we aim to quantify the adoption trends, identify the most popular development practices, and understand how LLMs are integrated into real-world software projects.
+	
+	\subsection{Experiment Execution}
+	The experiment will mainly consist of four phases:
+	\begin{enumerate}
+		\item \textbf{Keyword-Search} \textendash We will use the repository search endpoint to keep track of the popularity metric.
+		\item \textbf{Library-Search} \textendash We will use the code search endpoint to retrieve all occurrences of repositories with corresponding imports.
+		\item \textbf{Model-Search} \textendash We will use the code search endpoint to retrieve all occurrences of repositories with corresponding reference to model names.
+		\item \textbf{Attribute-Search} \textendash Starting from the complete list of all LLM-related repositories obtained previously, we sample and then query the repository endpoint for detailed repo attributes. 
+	\end{enumerate}
+	We subsequently report the considerations we made for each phase, the limits, the execution processes, and the preliminary results.
+	
+	\subsubsection{Data Collection for Keyword-Search}
+	To have a rough estimate of the popularity of LLM projects in GitHub for various languages, we first did a monthly analysis on the one hundred most popular repositories created that month and memorized useful metadata like number of stars, forks, topics, description, etc. This analysis went from January 2022, the year in which ChatGPT was launched, to October 2025, when this study began. The code needs a valid GitHub token for authentication, which can be created from the settings page in your GitHub account. When run, the script (repo\_search.py) queries GitHub for the most popular repositories created each month, retrieving interesting metadata and writing to a JSON file that serves as storage. The data collection process for this step did not take much time since with one request, we could collect all the repos we needed for a month.
+	
+	\subsubsection{Setting up Library-Search}
+	The first step is to gather the names and URLs of the GitHub repositories that import libraries of the chosen LLM providers, but we need some boundaries to the domain of the repositories; otherwise, the scale of data to analyze would be too much and would hinder the research. We settled on size boundaries. The domain of this study comprises all the GitHub repositories with files whose size is less than 5MB, plus language constraints. Furthermore, we decided to focus on the most mainstream, accessible, and easily implementable LLMs; this was done because not every LLM has an official or a reputable and endorsed third-party SDK, while other LLMs are not easily accessible, with their documentation and models being put behind a paywall. So for these reasons, we decided that our study will focus on \textit{OpenAI}, \textit{Gemini}, \textit{Anthropic}, \textit{Minstral}, \textit{xAI}, and \textit{Meta}.
+	The former two LLMs are only counted for specific languages; for example, \textit{xAI} only has an official SDK for \textit{Python} and none for the other languages. More importantly, there aren't any reputable third-party libraries, neither for \textit{Java} nor \textit{Go}, and so we have analyzed the usage of \textit{xAI} only on \textit{Python} files; the same goes for \textit{Meta}. 
+	
+	Since the GitHub Rest API does not support code search based on regular expressions, we decided to do a word list-based research. The word list was built for each language by looking at its import syntax and creating a list of every possible way to import the LLM client. For example, in the case of Python, there are two major import syntaxes for the OpenAI client:
+	\begin{itemize}
+		\item \textbf{import openai.OpenAI as alias}
+		\item \textbf{from openai import Openai}
+	\end{itemize}
+	Since GitHub code search does not distinguish between upper and lowercase letters, we can cover both cases by searching for "import openai". Lastly, for the data collection script to work, we need a Python dictionary that associates each word with a label that will be applied to the repository. This dictionary can be easily built manually by associating each library keyword with the providing company.
+	
+	\subsubsection{Setting up Model-Search}
+	Other than the LLM library used in a project, we are also interested in the specific LLM model that the LLM-integrated application is interfacing with. To do this, we create a starting list of the most important models for each provider by visiting the models and pricing page on their official site. This list is then enriched by combining it with the results of an API call querying the complete list of available models for each provider (when the list operation is available). model-search, just like library-search, uses the same language scope for code mining. This means only for \textit{Python}, \textit{Java} and \textit{Go} files and only for models that can be used by official SDK provided by  \textit{OpenAI}, \textit{Gemini}, \textit{Anthropic}, \textit{Minstral}, \textit{xAI}, or \textit{Meta}. 
+	
+	Just like for Library-Search, Model-Search is implemented as code search based on word matching. To avoid being blocked by models with very short names (like o1), we search for \textbackslash"word\textbackslash" instead of simply searching for word in a script file. The keyword dictionary, in the case of Model-Search, cannot be simply created manually, given its higher length. We will need to build it in a separate script by simply associating each model keyword with the name of the model.
+	
+	\subsubsection{Data Collection for Library-Search and Model-Search}
+	The script (mine.py) employs a dynamic chunking strategy based on size to be able to retrieve all occurrences of files satisfying certain queries. This query can be based on model names for Model-Search or on imports for Library-Search. A dedicated part of the script is used to manage rate-limiting from GitHub by pausing the execution each time we hit it until the next reset time. We query the endpoint a page at a time, with each page containing one hundred items, until we finish all results. If we get one thousand or more results, we stop and launch an exception because we could not retrieve all occurrences of the searched pattern. Lastly, based on the number of results, we adjust the size interval so that we can go faster when the queries are mostly empty, while not reaching the thousand cap when the results are dense. 
+	
+	To complete the data collection step, we need to run the same function (collect\_repo\_by\_language) twice for each language: in the first run, we search for library imports, while in the second run for model names. Given the objective of retrieving everything and the long list of models to search for, this data collection step was the most time-consuming of all, needing almost a week to complete.
+	
+	\subsubsection{Data Collection for Attribute-Search}
+	Starting from the list of collected repos we randomly sample five hundred repositories and query the GitHub endpoint for attributes of interest. The script is quite simple, and it follows more or less the same logic outlined by Keyword-Search. The github\_get function allows for managing authentication errors and rate-limiting while repeating the request in case of an unstable internet connection. The execution process did not take much time, and the only error we encountered was the 404 not found error. This error is probably caused by deleted projects or projects that have been made private since the execution of Model and Library-Search. To avoid this error, we just repeat the sampling process multiple times until we reach a run without the error, which should not take too many runs since this error is rare (you encounter one such repo in five hundred).
+	
+	\subsection{Data Preprocessing and Cleanup}
+	In this section, we discuss how we preprocessed and cleaned up the collected data from the previous steps.
+	
+	\subsubsection{Data Preprocessing for Keyword-Search}
+	The collected Data for Keyword-search is already in a format that can be worked with. Since we only need to use the topics, description, and name fields, even if some of them are null (description or name), the wordlist matching process would not change. The collected data is memorized in a JSON file as a list of dicts containing various useful repository metadata. This JSON file could then be loaded into a Python list and worked with.
+	
+	\subsubsection{Data Preprocessing for Library-Search and Model-Search}
+	The data collected by the mining script is stored in a JSON file format, containing a list of dictionaries. The dicts contain the name of the repository, URL, HTML that is a link to the human-readable page of the project, and a label dict. The label dict contains, for each label (the keyword that was found), a list of file paths. Each file path represents the location where the keyword was found. We are interested in knowing the relationship between model data and the library data, so we need to first combine the two data dictionaries before any further actions.
+	
+	The combine function combines the two JSON files to derive data about Model-Library correlation. First, we consider the repositories appearing in both lists: these repositories contain both the library import and the model reference, and as such, we can label them with both. In the case where the import and the model reference are in the same file (we also remember the filepaths), we can pair the two labels up. If we only found the import in a repository, we label it with the name of the provider, while if we only found a reference to a model, we label it with unknown library. In this way, we obtained a list of repositories with informative labels that could then be used in the analysis phase. 
+	
+	This step is done by running the combine function in the combine.py file. A special dict called model-library map is required for the script to be able to match models to the correct SDK. We built this Python dictionary starting from the previous list of models by creating a key for each model and associating it with an empty list of strings, which is then updated by appending possible parent SDKs. In this way, only correct SDK-Model matchings will be created in the final JSON file.
+	
+	\subsubsection{Data Preprocessing for Attribute-Search}
+	Like Keyword-Search, the data collected with Attribute-Search can already be worked with without much hindrance. The data is collected as a list of Python dictionaries, containing for each attribute-key a value that can be null. Everything is then stored in a JSON file, like always.
+	%------------------------------------------------
+	
+	\section{Results}
+	In this section of the report, we show the results of our study and our answer to each of the initial questions concerning the real-world adoption and usage of LLM technology. 
+	
+	\subsection{Popularity over time}
+	We respond to this question by analyzing the results collected from Keyword-Search. We analyzed in total five languages: \textit{Python}, \textit{Java}, \textit{C\#}, \textit{JavaScript} and \textit{Go}. We analyzed the name, the description, and the topics for each repository and classified a repository as LLM-related if it contained at least a word from our list of keywords. We then just show the proportion of LLM-related projects grouped by the month of creation of the project. Here are the resulting graphs:
+	\begin{figure}[!h]
+		\includegraphics[width=1\linewidth]{Figures/python\_llm\_fraction.png}
+		\caption{monthly proportion of Public Python projects with LLM-related terms in their description, name or topics}
+		\label{fig:python_monthly}
+	\end{figure}
+	In this first graph we can observe that the proportion of LLM-related terms in the most starred public GitHub Python projects, started from a level of 30\% in 2022 and increased until a stable 80\% in the first half of 2023. We can see that a majority of the most popular new Python projects were about AI and LLMs in the last three years.
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/java\_llm\_fraction.png}
+		\caption{monthly proportion of Public Java projects with LLM-related terms in their description, name or topics}
+		\label{fig:java_monthly}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/csharp\_llm\_fraction.png}
+		\caption{monthly proportion of Public C\# projects with LLM-related terms in their description, name or topics}
+		\label{fig:csharp_monthly}
+	\end{figure}
 
-\maketitle % Output the title section
+	For Java and C\# we observe a lower incidence of LLM-related terms appearing in the most starred recent projects, however we can still see an evident increase in popularity in the last two years.
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/go\_llm\_fraction.png}
+		\caption{monthly proportion of Public Go projects with LLM-related terms in their description, name or topics}
+		\label{fig:go_monthly}
+	\end{figure}
 
-%----------------------------------------------------------------------------------------
-%	ARTICLE CONTENTS
-%----------------------------------------------------------------------------------------
-
-\section{Introduction}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu luctus, imperdiet urna iaculis, mattis eros. Pellentesque iaculis odio vel nisl ullamcorper, nec faucibus ipsum molestie. Sed dictum nisl non aliquet porttitor. Etiam vulputate arcu dignissim, finibus sem et, viverra nisl. Aenean luctus congue massa, ut laoreet metus ornare in. Nunc fermentum nisi imperdiet lectus tincidunt vestibulum at ac elit. Nulla mattis nisl eu malesuada suscipit.
-
-Aliquam arcu turpis, ultrices sed luctus ac, vehicula id metus. Morbi eu feugiat velit, et tempus augue. Proin ac mattis tortor. Donec tincidunt, ante rhoncus luctus semper, arcu lorem lobortis justo, nec convallis ante quam quis lectus. Aenean tincidunt sodales massa, et hendrerit tellus mattis ac. Sed non pretium nibh. Donec cursus maximus luctus. Vivamus lobortis eros et massa porta porttitor. Donec laoreet nisl vel risus lacinia elementum non nec lacus. Nullam luctus, nulla volutpat ultricies ultrices, quam massa placerat augue, ut fringilla urna lectus nec nibh. Vestibulum efficitur condimentum orci a semper. Pellentesque ut metus pretium lacus maximus semper.
-
-Fusce varius orci ac magna dapibus porttitor. In tempor leo a neque bibendum sollicitudin. Nulla pretium fermentum nisi, eget sodales magna facilisis eu. Praesent aliquet nulla ut bibendum lacinia. Donec vel mauris vulputate, commodo ligula ut, egestas orci. Suspendisse commodo odio sed hendrerit lobortis. Donec finibus eros erat, vel ornare enim mattis et. Donec finibus dolor quis dolor tempus consequat. Mauris fringilla dui id libero egestas, ut mattis neque ornare. Ut condimentum urna pharetra ipsum consequat, eu interdum elit cursus. Vivamus scelerisque tortor et nunc ultricies, id tincidunt libero pharetra. Aliquam eu imperdiet leo. Morbi a massa volutpat velit condimentum convallis et facilisis dolor.
-
-\begin{equation}
-	\cos^3 \theta =\frac{1}{4}\cos\theta+\frac{3}{4}\cos 3\theta
-	\label{eq:example}
-\end{equation}
-
-Automatically referencing an equation number using its label: Equation \ref{eq:example}.
-
-In hac habitasse platea dictumst. Curabitur mattis elit sit amet justo luctus vestibulum. In hac habitasse platea dictumst. Pellentesque lobortis justo enim, a condimentum massa tempor eu. Ut quis nulla a quam pretium eleifend nec eu nisl. Nam cursus porttitor eros, sed luctus ligula convallis quis. Nam convallis, ligula in auctor euismod, ligula mauris fringilla tellus, et egestas mauris odio eget diam. Praesent sodales in ipsum eu dictum. Aenean vel enim ipsum. Fusce ut felis at eros sagittis bibendum mollis lobortis libero.
-
-Maecenas consectetur metus at tellus finibus condimentum. Proin arcu lectus, ultrices non tincidunt et, tincidunt ut quam. Integer luctus posuere est, non maximus ante dignissim quis. Nunc a cursus erat. Curabitur suscipit nibh in tincidunt sagittis. Nam malesuada vestibulum quam id gravida. Proin ut dapibus velit. Vestibulum eget quam quis ipsum semper convallis. Duis consectetur nibh ac diam dignissim, id condimentum enim dictum. Nam aliquet ligula eu magna pellentesque, nec sagittis leo lobortis. Aenean tincidunt dignissim egestas.
-
-%------------------------------------------------
-
-\section{Related Work}
-
-The existing literature already includes numerous empirical studies covering a wide range of topics related to Large Language Models (LLMs), such as exploring new domains of application (e.g., assisting in peer review \autocite{zhou-etal-2024-llm}, code understanding \autocite{10.1145/3597503.3639187}, and LLM-as-a-judge scenarios \autocite{gu2025surveyllmasajudge}), as well as studies focused on improving their performance \autocite{NEURIPS2024-71c3451f}. However, to our knowledge, there have not been many studies on the popularity of different LLM technologies in LLM-integrated software. An important study on the topic of LLM-integrated software \autocite{weber2024largelanguagemodelssoftware} attempts to establish new terminology, concepts, and methods for LLM-integrated application engineering. LLM-integrated application engineering refers to an emerging branch of software engineering that studies LLM-integrated applications, which are software systems that leverage LLMs to provide functionalities that would otherwise be infeasible or require substantial development effort to implement. To this end, the study proposes a structured framework for categorizing and analyzing LLM-integrated applications across various domains. Another paper on the same topic \autocite{10.1145/3715007} explores LLM-integrated application engineering from the perspective of its challenges. These challenges span different areas, such as prompts, APIs, and plugins, and require developers to navigate unique methodologies and considerations specific to LLM application development. The authors crawled and analyzed approximately 30,000 relevant questions from popular OpenAI developer forums to build a taxonomy of challenges faced by LLM developers and summarized a set of findings and actionable insights. This paper tries to build on some the concepts introduced in the two studies above through an observational study of public GitHub repositories of LLM-integrated applications.
-%------------------------------------------------
-
-\section{Methodologies}
-
-\subsection{Sample Sites \& Processing}
-
-This line shows how to use a footnote to further explain or cite text\footnote{Example footnote text.}.
-
-This is a bullet point list:
-
-\begin{itemize}
-	\item Arcu eros accumsan lorem, at posuere mi diam sit amet tortor
-	\item Fusce fermentum, mi sit amet euismod rutrum
-	\item Sem lorem molestie diam, iaculis aliquet sapien tortor non nisi
-	\item Pellentesque bibendum pretium aliquet
-\end{itemize}
-
-Mauris interdum porttitor fringilla. Proin tincidunt sodales leo at ornare. Donec tempus magna non mauris gravida luctus. Cras vitae arcu vitae mauris eleifend scelerisque. Nam sem sapien, vulputate nec felis eu, blandit convallis risus. Pellentesque sollicitudin venenatis tincidunt. In et ipsum libero. Nullam tempor ligula a massa convallis pellentesque.
-
-This is a numbered list:
-
-\begin{enumerate}
-	\item Donec dolor arcu, rutrum id molestie in, viverra sed diam
-	\item Curabitur feugiat
-	\item Turpis sed auctor facilisis
-\end{enumerate}
-
-\subsection{Species Identification}
-
-Proin lobortis efficitur dictum. Pellentesque vitae pharetra eros, quis dignissim magna. Sed tellus leo, semper non vestibulum vel, tincidunt eu mi. Aenean pretium ut velit sed facilisis. Ut placerat urna facilisis dolor suscipit vehicula. Ut ut auctor nunc. Nulla non massa eros. Proin rhoncus arcu odio, eu lobortis metus sollicitudin eu. Duis maximus ex dui, id bibendum diam dignissim id. Aliquam quis lorem lorem. Phasellus sagittis aliquet dolor, vulputate cursus dolor convallis vel. Suspendisse eu tellus feugiat, bibendum lectus quis, fermentum nunc. Nunc euismod condimentum magna nec bibendum. Curabitur elementum nibh eu sem cursus, eu aliquam leo rutrum. Sed bibendum augue sit amet pharetra ullamcorper. Aenean congue sit amet tortor vitae feugiat.
-
-Mauris interdum porttitor fringilla. Proin tincidunt sodales leo at ornare. Donec tempus magna non mauris gravida luctus. Cras vitae arcu vitae mauris eleifend scelerisque. Nam sem sapien, vulputate nec felis eu, blandit convallis risus. Pellentesque sollicitudin venenatis tincidunt. In et ipsum libero. Nullam tempor ligula a massa convallis pellentesque.
-
-\subsection{Data Analysis}
-
-Vestibulum sodales orci a nisi interdum tristique. In dictum vehicula dui, eget bibendum purus elementum eu. Pellentesque lobortis mattis mauris, non feugiat dolor vulputate a. Cras porttitor dapibus lacus at pulvinar. Praesent eu nunc et libero porttitor malesuada tempus quis massa. Aenean cursus ipsum a velit ultricies sagittis. Sed non leo ullamcorper, suscipit massa ut, pulvinar erat. Aliquam erat volutpat. Nulla non lacus vitae mi placerat tincidunt et ac diam. Aliquam tincidunt augue sem, ut vestibulum est volutpat eget. Suspendisse potenti. Integer condimentum, risus nec maximus elementum, lacus purus porta arcu, at ultrices diam nisl eget urna. Curabitur sollicitudin diam quis sollicitudin varius. Ut porta erat ornare laoreet euismod. In tincidunt purus dui, nec egestas dui convallis non. In vestibulum ipsum in dictum scelerisque.
-
-Mauris interdum porttitor fringilla. Proin tincidunt sodales leo at ornare. Donec tempus magna non mauris gravida luctus. Cras vitae arcu vitae mauris eleifend scelerisque. Nam sem sapien, vulputate nec felis eu, blandit convallis risus. Pellentesque sollicitudin venenatis tincidunt. In et ipsum libero. Nullam tempor ligula a massa convallis pellentesque. Mauris interdum porttitor fringilla. Proin tincidunt sodales leo at ornare. Donec tempus magna non mauris gravida luctus. Cras vitae arcu vitae mauris eleifend scelerisque. Nam sem sapien, vulputate nec felis eu, blandit convallis risus. Pellentesque sollicitudin venenatis tincidunt. In et ipsum libero. Nullam tempor ligula a massa convallis pellentesque.
-
-%------------------------------------------------
-
-\section{Results}
-
-\begin{table} % Single column table
-	\caption{Example single column table.}
-	\centering
-	\begin{tabular}{l l r}
-		\toprule
-		\multicolumn{2}{c}{Location} \\
-		\cmidrule(r){1-2}
-		East Distance & West Distance & Count \\
-		\midrule
-		100km & 200km & 422 \\
-		350km & 1000km & 1833 \\
-		600km & 1200km & 890 \\
-		\bottomrule
-	\end{tabular}
-	\label{tab:distcounts}
-\end{table}
-
-Referencing a table using its label: Table \ref{tab:distcounts}.
-
-\begin{table*} % Full width table (notice the starred environment)
-	\caption{Example two column table with fixed-width columns.}
-	\centering % Horizontally center the table
-	\begin{tabular}{L{0.2\linewidth} L{0.2\linewidth} R{0.15\linewidth}} % Manually specify column alignments with L{}, R{} or C{} and widths as a fixed amount, usually as a proportion of \linewidth
-		\toprule
-		\multicolumn{2}{c}{Location} \\
-		\cmidrule(r){1-2}
-		East Distance & West Distance & Count \\
-		\midrule
-		100km & 200km & 422 \\
-		350km & 1000km & 1833 \\
-		600km & 1200km & 890 \\
-		\bottomrule
-	\end{tabular}
-\end{table*}
-
-Aenean feugiat pellentesque venenatis. Sed faucibus tristique tortor vel ultrices. Donec consequat tellus sapien. Nam bibendum urna mauris, eget sagittis justo gravida vel. Mauris nisi lacus, malesuada sit amet neque ut, venenatis tempor orci. Curabitur feugiat sagittis molestie. Duis euismod arcu vitae quam scelerisque facilisis. Praesent volutpat eleifend tortor, in malesuada dui egestas id. Donec finibus ac risus sed pellentesque. Donec malesuada non magna nec feugiat. Mauris eget nibh nec orci congue porttitor vitae eu erat. Sed commodo ipsum ipsum, in elementum neque gravida euismod. Cras mi lacus, pulvinar ut sapien ut, rutrum sagittis dui. Donec non est a metus varius finibus. Pellentesque rutrum pellentesque ligula, vitae accumsan nulla hendrerit ut.
-
-\begin{figure} % Single column figure
-	\includegraphics[width=\linewidth]{Tolmukapea.jpg}
-	\caption{Anther of thale cress (Arabidopsis thaliana), fluorescence micrograph. Source: Heiti Paves, \href{https://commons.wikimedia.org/wiki/File:Tolmukapea.jpg}{https://commons.wiki-\\media.org/wiki/File:Tolmukapea.jpg}.}
-	\label{fig:tcanther}
-\end{figure}
-
-Referencing a figure using its label: Figure \ref{fig:tcanther}.
-
-Aenean porttitor eros non pharetra congue. Proin in odio in dolor luctus auctor ac et mi. Etiam euismod mi sed lectus fringilla pretium. Phasellus tristique maximus lectus et sodales. Mauris feugiat ligula quis semper luctus. Nam sit amet felis sed leo fermentum aliquet. Mauris arcu dui, posuere id sem eget, cursus pulvinar mi. Donec nec lacus non lectus fermentum scelerisque et at nibh. Sed tristique, metus ac vestibulum porta, tortor lectus placerat lorem, et convallis tellus dolor eget ante. Pellentesque dui ligula, hendrerit a purus et, volutpat tempor lectus. Mauris nec purus nec mauris rhoncus pellentesque. Quisque quis diam sed est lacinia congue. Donec magna est, hendrerit sed metus vel, accumsan rutrum nibh.
-
-\begin{figure*} % Two column figure (notice the starred environment)
-	\includegraphics[width=\linewidth]{Fibroblastid.jpg}
-	\caption{Bovine pulmonary artery endothelial cells in culture. Blue: nuclei; red: mitochondria; green: microfilaments. Computer generated image from a 3D model based on a confocal laser scanning microscopy using fluorescent marker dyes. Source: Heiti Paves, \href{https://commons.wikimedia.org/wiki/File:Fibroblastid.jpg}{https://commons.wikimedia.org/wiki/File:Fibroblastid.jpg}.}
-	\label{fig:bpartery}
-\end{figure*}
-
-Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam cursus lectus purus, tempus iaculis quam dictum tristique. Nam interdum sapien nec tempor mattis. Quisque id sapien nisi. Mauris vehicula ornare eros vel efficitur. Nulla consectetur, turpis quis fringilla tincidunt, mi neque iaculis lectus, vel commodo elit odio non ex. Duis facilisis, purus ac viverra iaculis, turpis lectus ultrices ante, ac vestibulum ligula magna in libero. Etiam tristique maximus lacinia. Vestibulum hendrerit, lacus malesuada laoreet blandit, sapien velit sollicitudin nunc, eu porttitor urna ligula at lorem. Aliquam faucibus eros in fermentum venenatis. Fusce consectetur congue pellentesque. Suspendisse at nisi sit amet est porttitor cursus. Cras placerat faucibus nunc, a laoreet justo dignissim sit amet.
-
-\subsection{International Support}
-
-\noindent àáâäãåèéêëìíîïòóôöõøùúûüÿýñçčšž
-
-\noindent ÀÁÂÄÃÅÈÉÊËÌÍÎÏÒÓÔÖÕØÙÚÛÜŸÝÑ
-
-\noindent ßÇŒÆČŠŽ
-
-\subsection{Links}
-
-This is a clickable URL link: \href{https://www.latextemplates.com}{LaTeX Templates}. This is a clickable email link: \href{mailto:vel@latextemplates.com}{vel@latextemplates.com}. This is a clickable monospaced URL link: \url{https://www.LaTeXTemplates.com}.
-
-%------------------------------------------------
-
-\section{Discussion}
-
-This statement requires citation. This statement requires multiple citations . This statement contains an in-text citation, for directly referring to a citation like so:.
-
-\subsection{Subsection One}
-
-Suspendisse potenti. Vivamus suscipit dapibus metus. Proin auctor iaculis ex, id fermentum lectus dapibus tristique. Nullam maximus eros eget leo pretium dapibus. Nunc in auctor erat, id interdum risus. Suspendisse aliquet vehicula accumsan. In vestibulum efficitur dictum. Sed ultrices, libero nec fringilla feugiat, elit massa auctor ligula, vehicula tempor ligula felis in lectus. Suspendisse sem dui, pharetra ut sodales eu, suscipit sit amet felis. Donec pretium viverra ante, ac pulvinar eros. Suspendisse gravida consectetur urna. Pellentesque vitae leo porta, imperdiet eros eget, posuere sem. Praesent eget leo efficitur odio bibendum condimentum sit amet vel ex. Nunc maximus quam orci, quis pulvinar nibh eleifend ac. Quisque consequat lacus magna, eu posuere tellus iaculis ac. Sed vitae tortor tincidunt ante sagittis iaculis.
-
-\subsection{Subsection Two}
-
-Nullam mollis tellus lorem, sed congue ipsum euismod a. Donec pulvinar neque sed ligula ornare sodales. Nulla sagittis vel lectus nec laoreet. Nulla volutpat malesuada turpis at ultricies. Ut luctus velit odio, sagittis volutpat erat aliquet vel. Donec ac neque eget neque volutpat mollis. Vestibulum viverra ligula et sapien bibendum, vel vulputate ex euismod. Curabitur nec velit velit. Aliquam vulputate lorem elit, id tempus nisl finibus sit amet. Curabitur ex turpis, consequat at lectus id, imperdiet molestie augue. Curabitur eu eros molestie purus commodo hendrerit. Quisque auctor ipsum nec mauris malesuada, non fringilla nibh viverra. Quisque gravida, metus quis semper pulvinar, dolor nisl suscipit leo, vestibulum volutpat ante justo ultrices diam. Sed id facilisis turpis, et aliquet eros.
-
-\subsubsection{Subsubsection Example}
-
-Duis venenatis eget lectus a aliquet. Integer vulputate ante suscipit felis feugiat rutrum. Aliquam eget dolor eu augue elementum ornare. Nulla fringilla interdum volutpat. Sed tincidunt, neque quis imperdiet hendrerit, turpis sapien ornare justo, ac blandit felis sem quis diam. Proin luctus urna sit amet felis tincidunt, sed congue nunc pellentesque. Ut faucibus a magna faucibus finibus. Etiam id mi euismod, auctor nisi eget, pretium metus. Proin tincidunt interdum mi non interdum. Donec semper luctus dolor at elementum. Aenean eu congue tortor, sed hendrerit magna. Quisque a dolor ante. Mauris semper id urna id gravida. Vestibulum mi tortor, finibus eu felis in, vehicula aliquam mi.
-
-Aliquam arcu turpis, ultrices sed luctus ac, vehicula id metus. Morbi eu feugiat velit, et tempus augue. Proin ac mattis tortor. Donec tincidunt, ante rhoncus luctus semper, arcu lorem lobortis justo, nec convallis ante quam quis lectus. Aenean tincidunt sodales massa, et hendrerit tellus mattis ac. Sed non pretium nibh. 
-
-Donec cursus maximus luctus. Vivamus lobortis eros et massa porta porttitor. Nam vitae suscipit mi. Pellentesque ex tellus, iaculis vel libero at, cursus pretium sapien. Curabitur accumsan velit sit amet nulla lobortis, ut pretium ex aliquam. Proin eget volutpat orci. Morbi eu aliquet turpis. Vivamus molestie urna quis tempor tristique. Proin hendrerit sem nec tempor sollicitudin.
-
-%----------------------------------------------------------------------------------------
-%	 REFERENCES
-%----------------------------------------------------------------------------------------
-
-\printbibliography % Output the bibliography
-
-%----------------------------------------------------------------------------------------
-
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/javascript\_llm\_fraction.png}
+		\caption{monthly proportion of Public Javascript projects with LLM-related terms in their description, name or topics}
+		\label{fig:javascript_monthly}
+	\end{figure}
+	For Golang and Javascript GitHub projects we see higher proportions of LLM-related projects and a similar peak in the may of 2025.
+	
+	\subsection{Popular programming languages}
+	To respond to this question we just compare the number of repositories we collected for each language in Model-Search and Library-Search. 
+	\begin{enumerate}
+		\item Number of repositories in the combined JSON file for Python: 262581
+		\item Number of repositories in the combined JSON file for Java: 8639
+		\item Number of repositories in the combined JSON file for Golang: 5511
+	\end{enumerate}
+	From the collected data we can see that Python is two order of magnitude more used for LLM-integrated application development than the other two analyzed languages.
+	
+	\subsection{Popular SDKs}
+	Each of the selected provider of LLM technology offers its own SDK to interface smoothly with its services. Like what we have already said in the experiment design section, official SDKs exist only for the most popular languages. We have built three graphs, one for each of the three languages we collected data for. Each graph will show the number of repositories that were found with the specific import statement that links it to the corresponding official SDK. Lastly, if a model reference was fopund in a repository with no known import pattern then the repository will be linked to 'other', in other words to a third party SDK.
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/llm\_library\_usage\_python.png}
+		\caption{Number of repositories found with code search with the imports of the relative SDK in Python}
+		\label{fig:python_library}
+	\end{figure}
+	
+		\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/llm\_library\_usage\_java.png}
+		\caption{Number of repositories found with code search with the imports of the relative SDK in Java}
+		\label{fig:java_library}
+	\end{figure}
+	
+	\raggedbottom
+	\pagebreak
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/llm\_library\_usage\_go.png}
+		\caption{Number of repositories found with code search with the imports of the relative SDK in Golang}
+		\label{fig:go_library}
+	\end{figure}
+	
+	These three graphs allow us to conclude that third-party library remain very popular in all the languages, while among official SDKs, OpenAI and Google remain dominant, with xAI being the less used given that it does not have free models.
+	
+	
+	\subsection{Popular LLM models}
+	Using the list of all models we derived previously with the list-model functionality for each provider, we count the number of references for each model in our dataset. In all three languages we see the trend of the 20\% top most used models making up more than 80\% of total model usage, suggesting that most developer use the most accessible and/or popular model.
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/llm\_model\_usage\_python.png}
+		\caption{Number of references for each model in decreasing order for Python repositories}
+		\label{fig:python_model}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/llm\_model\_usage\_java.png}
+		\caption{Number of references for each model in decreasing order for Java repositories}
+		\label{fig:java_model}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/llm\_model\_usage\_go.png}
+		\caption{Number of references for each model in decreasing order for Golang repositories}
+		\label{fig:go_model}
+	\end{figure}
+	
+	In particular, for the twenty most referenced models, we conducted a deeper analysis to examine which libraries they were used in association with. Our method does not, in fact, guarantee that if an import statement for a library and a reference to a model appear in the same repository, or even in the same file, the model is actually used through that library. It only underlines association. Now we can show the graphs we made to show the association of various models with the five official SDKs we are considering.
+	
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/top\_models\_prop\_python.png}
+		\caption{Proportions of models found within the same file or repository of an import for Python projects}
+		\label{fig:python_model_prop}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/top\_models\_prop\_java.png}
+		\caption{Proportions of models found within the same file or repository of an import for Java projects}
+		\label{fig:java_model_prop}
+	\end{figure}
+	
+	\raggedbottom
+	\pagebreak
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/top\_models\_prop\_go.png}
+		\caption{Proportions of models found within the same file or repository of an import for Golang projects}
+		\label{fig:go_model_prop}
+	\end{figure}
+	
+	We see that our script was not able to associate most model references to a known official SDK in Java and Go, but was able to do so for the Python dataset. This may be caused by the higher popularity of official SDKs in Python and the higher popularity of Python itself for LLM-integrated software development. The most popular models do not change much between languages and are mostly dominated by OpenAI models with the occasional Google model. We can also observe that in correspondence of Google models we can see a significant proportion of association with the Gemini SDK, confirming the correctness of our method.
+	
+	\subsection{Usage patterns of LLMs}
+	Let us first discuss the classification method we decided to settle on:
+	\begin{enumerate}
+		\item Conversational Agents --- Used for direct human-LLM interaction in dialog form (e.g., chatbots, virtual assistants, helpdesk systems).
+		\item Generation Agents --- Used to produce text, code, or other content using LLMs (e.g., article writing, code completion, story generation).
+		\item Retrieval-Augmented --- Uses external knowledge sources to enhance LLM outputs and improve correctness (e.g., document question answering, knowledge-base assisted generation).
+		\item Agentic Orchestration --- Used when the LLM drives multi-step actions, calls APIs, or interacts with other software components (e.g., workflow automation, multi-step task agents, Auto-GPT style agents).
+		\item Multimodal --- Handles multiple data types, such as text, images, audio, and video (e.g., image captioning, audio transcription, video summarization).
+		\item Domain-Specific --- Tailored LLM applications designed for a particular field or domain (e.g., legal AI assistants, medical Q\&A systems, financial analysis tools).
+	\end{enumerate}
+	We based our classification method by matching the description, topics and name of the repository against a list of probable keywords for each category. This keyword matching method is not very efficient and leaves a lot of the repositories unclassified. Nevertheless we think that this method is a reliable way to classify the repositories based on purpose.
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/python\_llm\_category\_proportions.png}
+		\caption{Proportions of various LLM-integrated software category for Python}
+		\label{fig:python_cat_prop}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/java\_llm\_category\_proportions.png}
+		\caption{Proportions of various LLM-integrated software category for Java}
+		\label{fig:java_cat_prop}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/go\_llm\_category\_proportions.png}
+		\caption{Proportions of various LLM-integrated software category for Golang}
+		\label{fig:go_cat_prop}
+	\end{figure}
+	\raggedbottom
+	\pagebreak
+	
+	We can observe from the bar charts we built that between the classified repositories most llm are used as conversational agents, for generation tasks or for agentic orchestration.
+	
+	\subsection{Repository attribute patterns}
+	Lastly, we try to statistically analyze the attributes of an average LLM-integrated software on GitHub. Let us start by checking how correlated are the numeric attributes of the LLM-using GitHub repositories by computing the Spearman's rho for each pair.
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/table\_corr\_python.png}
+		\caption{Spearman's Correlation Heatmap for Python}
+		\label{fig:python_corr}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/table\_corr\_go.png}
+		\caption{Spearman's Correlation Heatmap for Go}
+		\label{fig:go_corr}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/table\_corr\_java.png}
+		\caption{Spearman's Correlation Heatmap for Java}
+		\label{fig:java_corr}
+	\end{figure}
+	
+	The Spearman's correlation matrices for the Java and Golang datasets are very similar with each-other, while the one built from the Python dataset is quite different. The biggest observable difference is that for python projects the number of open issues correlates the most with the network count (number of forks) while in the other two languages it correlates the most with the number of stars of a project. This suggests that Python LLM projects are less visible, with activity driven by contributor engagement rather than popularity. This may be due to Python’s low barrier to entry, leading to many experimental projects with few stars. Let us Hypothesis test this.\\
+	First test (Python vs Java): 
+	\begin{itemize}
+		\item $H_0$ --- Null Hypothesis\\
+		The mean number of stars in Python LLM Repositories is equal to the mean number of stars in Java LLM Repositories.
+		\item $H_1$ --- Alternative Hypothesis\\
+		The mean number of stars in Python LLM Repositories is less than the mean number of stars in Java LLM Repositories.
+	\end{itemize}
+	Second test (Python vs Golang): 
+	\begin{itemize}
+		\item $H_0$ --- Null Hypothesis\\
+		The mean number of stars in Python LLM Repositories is equal to the mean number of stars in Golang LLM Repositories.
+		\item $H_1$ --- Alternative Hypothesis\\
+		The mean number of stars in Python LLM Repositories is less than the mean number of stars in Golang LLM Repositories.
+	\end{itemize}
+	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Box-Cox transformation after shifting the number of stars by one to avoid zeros. The Box-Cox transformation is needed to stabilize variance and make the distribution more Gaussian and suitable for t-tests, transforming power law like distributions (e.g., the number of stars in GitHub repositories \autocite{lima2014codingscalegithubcollaborative}) into more normal shapes. We then apply Welch's t-test (one-tailed) to compute the t-statistics and the p-value for both Hypothesis tests assuming a significance level of $\alpha=0.05$. One sided tests are reasonable here because we suppose that the number of stars is lower in python LLM projects.
+	
+	\pagebreak
+	
+	Sample statistics before Box-Cox:
+	\begin{itemize}
+		\item $\overline{X}_{Python}=18.99$
+		\item $S^2_{Python}=270.93^2$
+		\item $\overline{X}_{Java}=25.34$
+		\item $S^2_{Java}=179.75^2$
+		\item $\overline{X}_{Go}=188.41$
+		\item $S^2_{Go}=1986.66^2$
+	\end{itemize}
+	Sample statistics after Box-Cox:
+	\begin{itemize}
+		\item $\overline{X'}_{Python}=0.173$
+		\item $S'^2_{Python}=0.268^2$
+		\item $\overline{X'}_{Java}=0.245$
+		\item $S'^2_{Java}=0.352^2$
+		\item $\overline{X'}_{Go}=0.393$
+		\item $S'^2_{Go}=0.506^2$
+	\end{itemize}
+	Lambda parameter for Box-Cox transformation:
+	\begin{itemize}
+		\item $\lambda_{Python}=-0.7517$
+		\item $\lambda_{Java}=-0.6540$
+		\item $\lambda_{Go}=-0.4958$
+	\end{itemize}
+	For different values of lambda the Box-Cox transformation applies different operations on the dataset. When $\lambda=1$ then we have the original variable, when $\lambda=0$ , we have the logarithm transformation, when $\lambda=-1$  we have the reciprocal transformation, and when $\lambda=0.5$  we have the square root. Our $\lambda\approx–0.7$ indicates a transformation close to reciprocal-root behavior
+	T-statistic and p-value for the two Welch t-tests:
+	\begin{itemize}
+		\item Python vs Java ---\\
+		$t=-3.6139$\\
+		$p=0.000159$
+		\item Python vs Go ---\\
+		$t=-8.5982$\\
+		$p=0.000000$
+	\end{itemize}
+	Both values are lower than the significance level $\alpha=0.05$ leading us to reject the null hypotheses $H_0$ for both comparisons. In other words, there is enough evidence to support that the mean number of stars for Python LLM projects are lower than those of Java and Golang LLM projects. Thus, Python LLM repositories have significantly fewer stars, supporting the observation of lower visibility compared to Java and Golang projects. A natural thing we can derive is that since Python repositories are generally less visible and more experimental, their size may be smaller than their corresponding Java and Golang projects. The paper \autocite{zhang2009distributionprogramsizesimplications} supports a log-normal distribution of program sizes so we can use the same procedure we applied for the number of stars.
+	First size test (Python vs Java):
+	\begin{itemize}
+		\item $H_0$ --- Null Hypothesis\\
+		The mean size of Python LLM Repositories is equal to the mean size of Java LLM Repositories.
+		\item $H_1$ --- Alternative Hypothesis\\
+		The mean size of Python LLM Repositories is less than the mean size of Java LLM Repositories.
+	\end{itemize}
+	Second size test (Python vs Golang): 
+	\begin{itemize}
+		\item $H_0$ --- Null Hypothesis\\
+		The mean size of Python LLM Repositories is equal to the mean size of Golang LLM Repositories.
+		\item $H_1$ --- Alternative Hypothesis\\
+		The mean size of Python LLM Repositories is less than the mean size of Golang LLM Repositories.
+	\end{itemize}
+	Sample statistics before Box-Cox:
+	\begin{itemize}
+		\item $\overline{X}_{Python}=24.19$
+		\item $S^2_{Python}=75.03^2$
+		\item $\overline{X}_{Java}=49.25$
+		\item $S^2_{Java}=356.95^2$
+		\item $\overline{X}_{Go}=31.98$
+		\item $S^2_{Go}=169.90^2$
+	\end{itemize}
+	Sample statistics after Box-Cox:
+	\begin{itemize}
+		\item $\overline{X'}_{Python}=0.643$
+		\item $S'^2_{Python}=0.648^2$
+		\item $\overline{X'}_{Java}=0.900$
+		\item $S'^2_{Java}=0.817^2$
+		\item $\overline{X'}_{Go}=0.728$
+		\item $S'^2_{Go}=0.678^2$
+	\end{itemize}
+	Lambda parameter for Box-Cox transformation:
+	\begin{itemize}
+		\item $\lambda_{Python}=-0.5846$
+		\item $\lambda_{Java}=-0.3503$
+		\item $\lambda_{Go}=-0.4997$
+	\end{itemize}
+	T-statistic and p-value for the two Welch t-tests:
+	\begin{itemize}
+		\item Python vs Java ---\\
+		$t=-5.5173$\\
+		$p=0.000000$
+		\item Python vs Go ---\\
+		$t=-2.0314$\\
+		$p=0.021239$
+	\end{itemize}
+	The statistical tests once again supports our reasoning. These findings support the hypothesis that Python LLM projects tend to be less prominent and smaller in scope. However, identifying the underlying causes—such as ecosystem norms, project maturity, or contributor profiles—requires further analysis.
+	
+	%------------------------------------------------
+	
+	\section{Threats to validity}
+	When interpreting the results of this study, several potential threats to validity must be considered:
+	\begin{itemize}
+		\item External Validity:
+		\begin{itemize}
+			\item Our analysis focuses exclusively on public GitHub repositories and three programming languages: Python, Java, and Go.
+			\item Projects in private repositories or written in other languages may exhibit different patterns of LLM usage, limiting generalizability.
+			\item Additionally, we only consider LLMs with official SDKs from six providers; thus, findings may not generalize to niche or proprietary LLMs.
+		\end{itemize}
+		\item Internal Validity:
+		\begin{itemize}
+			\item The reliance on keyword and import-based code searches may miss repositories that use unconventional naming, dynamic imports, or indirect API wrappers.
+			\item Rate-limiting and the GitHub search API cap (1000 results per query) might have caused incomplete data retrieval for highly popular SDKs or models.
+		\end{itemize}
+		\item Construct Validity:
+		\begin{itemize}
+			\item The classification of repositories into usage patterns (Conversational, Generation, etc.) is based on keyword matching in topics, description, and repository names, this method may misclassify or leave many repositories unclassified, potentially affecting the accuracy of usage pattern analysis.
+			\item Similarly, model-library association is inferred based on co-occurrence within a file or repository, which may not reflect actual usage.
+		\end{itemize}
+		\item Conclusion Validity:
+		\begin{itemize}
+			\item Statistical analyses rely on random samples of 500 repositories for hypothesis tests, which are only sampled one time.
+			\item While Box-Cox transformations help normalize skewed data, extreme values in popularity or size could influence results.
+			\item Correlations observed between repository attributes are descriptive and do not imply causation.
+		\end{itemize}
+	\end{itemize}
+	\pagebreak
+	\section{Discussion}
+	Our results provide several insights into the real-world adoption of LLMs in GitHub repositories. Python dominates LLM-integrated development, with two orders of magnitude more repositories than Java or Go, while OpenAI SDK and models are the most widely adopted across all languages. Other SDKs like xAI have minimal presence, likely due to limited accessibility. The usage patterns are primarily Conversational, Generation, and Agentic Orchestration, reflecting common application scenarios like chatbots, content generation, and workflow automation. We lastly concluded, through statistical analysis, that Python repositories tend to have fewer stars and smaller size, suggesting many experimental or prototype projects, whereas Go and Java projects are larger and more visible.
+	
+	Our research is useful for LLM-integrated software developers: it helps in selecting LLM models and SDKs with the largest community support. For example, using Python with OpenAI SDK maximizes compatibility and access to widely tested models. As for lessons learned wefound that SDK accessibility influences greatly the language choice, while keyword-based classification is effective for high-level categorization but could be improved with NLP-based semantic analysis for more accurate usage pattern identification.
+	
+	\section{Conclusions}
+	
+	This study offers a comprehensive observational analysis of LLM adoption in public GitHub repositories.
+	
+	\subsection{Main Contributions}
+	\begin{enumerate}
+		\item Quantified the evolution of LLM-integrated software popularity over 2022–2025, showing rapid adoption, especially in Python.
+		\item Identified the most popular SDKs (OpenAI, Google) and models, highlighting the 80/20 pattern where a few models dominate usage.
+		\item Classified usage patterns across repositories, providing actionable insights for developers and researchers.
+		\item Conducted statistical analysis of repository attributes, revealing differences in visibility and project scale across languages.
+	\end{enumerate}
+	
+	\subsection{Future Work}
+	\begin{itemize}
+		\item Extend the study to \textbf{private repositories} or \textbf{other programming languages} to improve external validity.
+		\item Enhance usage pattern classification using \textbf{NLP-based semantic analysis} or \textbf{machine learning} to reduce misclassification.
+		\item Investigate \textbf{causal relationships} between SDK choice, project visibility, and adoption of LLMs.
+		\item Explore \textbf{multi-model projects} and \textbf{cross-SDK integrations} to better understand complex LLM application architectures.
+	\end{itemize}
+	
+	%----------------------------------------------------------------------------------------
+	%	 REFERENCES
+	%----------------------------------------------------------------------------------------
+	
+	\printbibliography % Output the bibliography
+	
+	%----------------------------------------------------------------------------------------
+	
 \end{document}
