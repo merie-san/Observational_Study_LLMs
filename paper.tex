@@ -382,21 +382,22 @@ twoside, % Two side traditional mode where headers and footers change between od
 		\label{fig:java_corr}
 	\end{figure}
 	The Spearman's correlation matrices for the Java and Golang datasets are very similar with each-other, while the one built from the Python dataset is quite different. The biggest observable difference is that for python projects the number of open issues correlates the most with the network count (number of forks) while in the other two languages it correlates the most with the number of stars of a project. This suggests that Python LLM projects may be less visible, with activity driven by contributor engagement rather than popularity. This may be due to Python’s low barrier to entry, leading to many experimental projects with few stars. Let us Hypothesis test this.\\
-	First Test (Python vs Java): 
+	First test (Python vs Java): 
 	\begin{itemize}
 		\item $H_0$ --- Null Hypothesis\\
 		The mean number of stars in Python LLM Repositories is equal to the mean number of stars in Java LLM Repositories.
 		\item $H_1$ --- Alternative Hypothesis\\
 		The mean number of stars in Python LLM Repositories is less than the mean number of stars in Java LLM Repositories.
 	\end{itemize}
-	Second Test (Python vs Golang): 
+	Second test (Python vs Golang): 
 	\begin{itemize}
 		\item $H_0$ --- Null Hypothesis\\
 		The mean number of stars in Python LLM Repositories is equal to the mean number of stars in Golang LLM Repositories.
 		\item $H_1$ --- Alternative Hypothesis\\
 		The mean number of stars in Python LLM Repositories is less than the mean number of stars in Golang LLM Repositories.
 	\end{itemize}
-	We sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Box-Cox transformation after shifting the number of stars by one to avoid zeros. The Box-Cox transformation is needed to stabilize variance and make the distribution more Gaussian and suitable for t-tests, transforming power law like distributions (e.g., the number of stars in GitHub repositories \autocite{lima2014codingscalegithubcollaborative}) into more normal shapes. We then apply Welch's t-test (one-tailed) to compute the t-statistics and the p-value for both Hypothesis tests assuming a significance level of $\alpha=0.05$. One sided tests are reasonable here because we suppose that the number of stars is lower in python LLM projects:
+	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Box-Cox transformation after shifting the number of stars by one to avoid zeros. The Box-Cox transformation is needed to stabilize variance and make the distribution more Gaussian and suitable for t-tests, transforming power law like distributions (e.g., the number of stars in GitHub repositories \autocite{lima2014codingscalegithubcollaborative}) into more normal shapes. We then apply Welch's t-test (one-tailed) to compute the t-statistics and the p-value for both Hypothesis tests assuming a significance level of $\alpha=0.05$. One sided tests are reasonable here because we suppose that the number of stars is lower in python LLM projects.
+	Sample statistics before Box-Cox
 	\begin{itemize}
 		\item $\overline{X}_{Python}=18.99$
 		\item $S^2_{Python}=270.93^2$
@@ -405,7 +406,7 @@ twoside, % Two side traditional mode where headers and footers change between od
 		\item $\overline{X}_{Go}=188.41$
 		\item $S^2_{Go}=1986.66^2$
 	\end{itemize}
-	sample statistics after Box-Cox:
+	Sample statistics after Box-Cox:
 	\begin{itemize}
 		\item $\overline{X'}_{Python}=0.173$
 		\item $S'^2_{Python}=0.268^2$
@@ -420,7 +421,7 @@ twoside, % Two side traditional mode where headers and footers change between od
 		\item $\lambda_{Java}=-0.6540$
 		\item $\lambda_{Go}=-0.4958$
 	\end{itemize}
-	For different values of lambda the Box-Cox transformation applies different operations on the dataset. When $\lambda=1$ then we have the original variable, when $\lambda=0$ , we have the logarithm transformation, when $\lambda=-1$  we have the reciprocal transformation, and when $\lambda=0.5$  we have the square root.
+	For different values of lambda the Box-Cox transformation applies different operations on the dataset. When $\lambda=1$ then we have the original variable, when $\lambda=0$ , we have the logarithm transformation, when $\lambda=-1$  we have the reciprocal transformation, and when $\lambda=0.5$  we have the square root. Our $\lambda\approx–0.7$ indicates a transformation close to reciprocal-root behavior
 	T-statistic and p-value for the two Welch t-tests:
 	\begin{itemize}
 		\item Python vs Java ---\\
@@ -430,29 +431,110 @@ twoside, % Two side traditional mode where headers and footers change between od
 		$t=-8.5982$\\
 		$p=0.000000$
 	\end{itemize}
-	Both values are lower than the significance level $\alpha=0.05$ leading us to reject the null hypotheses $H_0$ for both comparisons. In other words, there is enough evidence to support that the mean number of stars for Python LLM projects are lower than those of Java and Golang LLM projects. Thus, Python LLM repositories have significantly fewer stars, supporting the observation of lower visibility compared to Java and Golang projects.
+	Both values are lower than the significance level $\alpha=0.05$ leading us to reject the null hypotheses $H_0$ for both comparisons. In other words, there is enough evidence to support that the mean number of stars for Python LLM projects are lower than those of Java and Golang LLM projects. Thus, Python LLM repositories have significantly fewer stars, supporting the observation of lower visibility compared to Java and Golang projects. A natural thing we can derive is that since Python repositories are generally less visible and more experimental, their size may be smaller than their corresponding Java and Golang projects. The paper \autocite{zhang2009distributionprogramsizesimplications} supports a log-normal distribution of program sizes so we can use the same procedure we applied for the number of stars.
+	First size test (Python vs Java):
+	\begin{itemize}
+		\item $H_0$ --- Null Hypothesis\\
+		The mean size of Python LLM Repositories is equal to the mean size of Java LLM Repositories.
+		\item $H_1$ --- Alternative Hypothesis\\
+		The mean size of Python LLM Repositories is less than the mean size of Java LLM Repositories.
+	\end{itemize}
+	Second size test (Python vs Golang): 
+	\begin{itemize}
+		\item $H_0$ --- Null Hypothesis\\
+		The mean size of Python LLM Repositories is equal to the mean size of Golang LLM Repositories.
+		\item $H_1$ --- Alternative Hypothesis\\
+		The mean size of Python LLM Repositories is less than the mean size of Golang LLM Repositories.
+	\end{itemize}
+	Sample statistics before Box-Cox:
+	\begin{itemize}
+		\item $\overline{X}_{Python}=24.19$
+		\item $S^2_{Python}=75.03^2$
+		\item $\overline{X}_{Java}=49.25$
+		\item $S^2_{Java}=356.95^2$
+		\item $\overline{X}_{Go}=31.98$
+		\item $S^2_{Go}=169.90^2$
+	\end{itemize}
+	Sample statistics after Box-Cox:
+	\begin{itemize}
+		\item $\overline{X'}_{Python}=0.643$
+		\item $S'^2_{Python}=0.648^2$
+		\item $\overline{X'}_{Java}=0.900$
+		\item $S'^2_{Java}=0.817^2$
+		\item $\overline{X'}_{Go}=0.728$
+		\item $S'^2_{Go}=0.678^2$
+	\end{itemize}
+	Lambda parameter for Box-Cox transformation:
+	\begin{itemize}
+		\item $\lambda_{Python}=-0.5846$
+		\item $\lambda_{Java}=-0.3503$
+		\item $\lambda_{Go}=-0.4997$
+	\end{itemize}
+	T-statistic and p-value for the two Welch t-tests:
+	\begin{itemize}
+		\item Python vs Java ---\\
+		$t=-5.5173$\\
+		$p=0.000000$
+		\item Python vs Go ---\\
+		$t=-2.0314$\\
+		$p=0.021239$
+	\end{itemize}
+	The statistical tests once again supports our reasoning. These findings support the hypothesis that Python LLM projects tend to be less prominent and smaller in scope. However, identifying the underlying causes—such as ecosystem norms, project maturity, or contributor profiles—requires further analysis.
 	
 	%------------------------------------------------
 	
+	\section{Threats to validity}
+	When interpreting the results of this study, several potential threats to validity must be considered:
+	\begin{itemize}
+		\item External Validity:
+		\begin{itemize}
+			\item Our analysis focuses exclusively on public GitHub repositories and three programming languages: Python, Java, and Go.
+			\item Projects in private repositories or written in other languages may exhibit different patterns of LLM usage, limiting generalizability.
+			\item Additionally, we only consider LLMs with official SDKs from six providers; thus, findings may not generalize to niche or proprietary LLMs.
+		\end{itemize}
+		\item Internal Validity:
+		\begin{itemize}
+			\item The reliance on keyword and import-based code searches may miss repositories that use unconventional naming, dynamic imports, or indirect API wrappers.
+			\item Rate-limiting and the GitHub search API cap (1000 results per query) might have caused incomplete data retrieval for highly popular SDKs or models.
+		\end{itemize}
+		\pagebreak
+		\item Construct Validity:
+		\begin{itemize}
+			\item The classification of repositories into usage patterns (Conversational, Generation, etc.) is based on keyword matching in topics, description, and repository names, this method may misclassify or leave many repositories unclassified, potentially affecting the accuracy of usage pattern analysis.
+			\item Similarly, model-library association is inferred based on co-occurrence within a file or repository, which may not reflect actual usage.
+		\end{itemize}
+		\item Conclusion Validity:
+		\begin{itemize}
+			\item Statistical analyses rely on random samples of 500 repositories for hypothesis tests, which are only sampled one time.
+			\item While Box-Cox transformations help normalize skewed data, extreme values in popularity or size could influence results.
+			\item Correlations observed between repository attributes are descriptive and do not imply causation.
+		\end{itemize}
+	\end{itemize}
+	
 	\section{Discussion}
+	Our results provide several insights into the real-world adoption of LLMs in GitHub repositories. Python dominates LLM-integrated development, with two orders of magnitude more repositories than Java or Go, while OpenAI SDK and models are the most widely adopted across all languages. Other SDKs like xAI have minimal presence, likely due to limited accessibility. The usage patterns are primarily Conversational, Generation, and Agentic Orchestration, reflecting common application scenarios like chatbots, content generation, and workflow automation. We lastly concluded, through statistical analysis, that Python repositories tend to have fewer stars and smaller size, suggesting many experimental or prototype projects, whereas Go and Java projects are larger and more visible.
 	
-	This statement requires citation. This statement requires multiple citations . This statement contains an in-text citation, for directly referring to a citation like so:.
+	Our research is useful for LLM-integrated software developers: it helps in selecting LLM models and SDKs with the largest community support. For example, using Python with OpenAI SDK maximizes compatibility and access to widely tested models. As for lessons learned wefound that SDK accessibility influences greatly the language choice, while keyword-based classification is effective for high-level categorization but could be improved with NLP-based semantic analysis for more accurate usage pattern identification.
 	
-	\subsection{Subsection One}
+	\section{Conclusions}
 	
-	Suspendisse potenti. Vivamus suscipit dapibus metus. Proin auctor iaculis ex, id fermentum lectus dapibus tristique. Nullam maximus eros eget leo pretium dapibus. Nunc in auctor erat, id interdum risus. Suspendisse aliquet vehicula accumsan. In vestibulum efficitur dictum. Sed ultrices, libero nec fringilla feugiat, elit massa auctor ligula, vehicula tempor ligula felis in lectus. Suspendisse sem dui, pharetra ut sodales eu, suscipit sit amet felis. Donec pretium viverra ante, ac pulvinar eros. Suspendisse gravida consectetur urna. Pellentesque vitae leo porta, imperdiet eros eget, posuere sem. Praesent eget leo efficitur odio bibendum condimentum sit amet vel ex. Nunc maximus quam orci, quis pulvinar nibh eleifend ac. Quisque consequat lacus magna, eu posuere tellus iaculis ac. Sed vitae tortor tincidunt ante sagittis iaculis.
+	This study offers a comprehensive observational analysis of LLM adoption in public GitHub repositories.
 	
-	\subsection{Subsection Two}
+	\subsection{Main Contributions}
+	\begin{enumerate}
+		\item Quantified the evolution of LLM-integrated software popularity over 2022–2025, showing rapid adoption, especially in Python.
+		\item Identified the most popular SDKs (OpenAI, Google) and models, highlighting the 80/20 pattern where a few models dominate usage.
+		\item Classified usage patterns across repositories, providing actionable insights for developers and researchers.
+		\item Conducted statistical analysis of repository attributes, revealing differences in visibility and project scale across languages.
+	\end{enumerate}
 	
-	Nullam mollis tellus lorem, sed congue ipsum euismod a. Donec pulvinar neque sed ligula ornare sodales. Nulla sagittis vel lectus nec laoreet. Nulla volutpat malesuada turpis at ultricies. Ut luctus velit odio, sagittis volutpat erat aliquet vel. Donec ac neque eget neque volutpat mollis. Vestibulum viverra ligula et sapien bibendum, vel vulputate ex euismod. Curabitur nec velit velit. Aliquam vulputate lorem elit, id tempus nisl finibus sit amet. Curabitur ex turpis, consequat at lectus id, imperdiet molestie augue. Curabitur eu eros molestie purus commodo hendrerit. Quisque auctor ipsum nec mauris malesuada, non fringilla nibh viverra. Quisque gravida, metus quis semper pulvinar, dolor nisl suscipit leo, vestibulum volutpat ante justo ultrices diam. Sed id facilisis turpis, et aliquet eros.
-	
-	\subsubsection{Subsubsection Example}
-	
-	Duis venenatis eget lectus a aliquet. Integer vulputate ante suscipit felis feugiat rutrum. Aliquam eget dolor eu augue elementum ornare. Nulla fringilla interdum volutpat. Sed tincidunt, neque quis imperdiet hendrerit, turpis sapien ornare justo, ac blandit felis sem quis diam. Proin luctus urna sit amet felis tincidunt, sed congue nunc pellentesque. Ut faucibus a magna faucibus finibus. Etiam id mi euismod, auctor nisi eget, pretium metus. Proin tincidunt interdum mi non interdum. Donec semper luctus dolor at elementum. Aenean eu congue tortor, sed hendrerit magna. Quisque a dolor ante. Mauris semper id urna id gravida. Vestibulum mi tortor, finibus eu felis in, vehicula aliquam mi.
-	
-	Aliquam arcu turpis, ultrices sed luctus ac, vehicula id metus. Morbi eu feugiat velit, et tempus augue. Proin ac mattis tortor. Donec tincidunt, ante rhoncus luctus semper, arcu lorem lobortis justo, nec convallis ante quam quis lectus. Aenean tincidunt sodales massa, et hendrerit tellus mattis ac. Sed non pretium nibh. 
-	
-	Donec cursus maximus luctus. Vivamus lobortis eros et massa porta porttitor. Nam vitae suscipit mi. Pellentesque ex tellus, iaculis vel libero at, cursus pretium sapien. Curabitur accumsan velit sit amet nulla lobortis, ut pretium ex aliquam. Proin eget volutpat orci. Morbi eu aliquet turpis. Vivamus molestie urna quis tempor tristique. Proin hendrerit sem nec tempor sollicitudin.
+	\subsection{Future Work}
+	\begin{itemize}
+		\item Extend the study to \textbf{private repositories} or \textbf{other programming languages} to improve external validity.
+		\item Enhance usage pattern classification using \textbf{NLP-based semantic analysis} or \textbf{machine learning} to reduce misclassification.
+		\item Investigate \textbf{causal relationships} between SDK choice, project visibility, and adoption of LLMs.
+		\item Explore \textbf{multi-model projects} and \textbf{cross-SDK integrations} to better understand complex LLM application architectures.
+	\end{itemize}
 	
 	%----------------------------------------------------------------------------------------
 	%	 REFERENCES
