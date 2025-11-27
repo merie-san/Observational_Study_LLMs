@@ -1,7 +1,7 @@
 import json
 import sys
 import numpy as np
-from scipy.stats import boxcox, ttest_ind, boxcox_normmax
+from scipy.stats import boxcox, ttest_ind, boxcox_normmax, shapiro
 
 # -----------------------
 # Load datasets
@@ -21,6 +21,16 @@ size_go = np.array([d.get("size", 0) for d in go_data])
 if len(size_python)!=500 or len(size_java)!=500 or len(size_go)!=500:
     print("number of samples is not 500")
     sys.exit(0)
+
+# Check if data is normally distributed with the Shapiro-Wilk test
+print("===== Shapiro-Wills test =====")
+res_python = shapiro(size_python)
+res_java = shapiro(size_java)
+res_go = shapiro(size_go)
+
+print(f"Shapiro-Wilk test results (python): {res_python.statistic:.4f}, p-value: {res_python.pvalue:.4f}")
+print(f"Shapiro-Wilk test results (java): {res_java.statistic:.4f}, p-value: {res_java.pvalue:.4f}")
+print(f"Shapiro-Wilk test results (go): {res_go.statistic:.4f}, p-value: {res_go.pvalue:.4f}")
 
 # -----------------------
 # Shift by 1 to handle zeros
@@ -52,7 +62,7 @@ t_go, p_go = ttest_ind(boxcox_python, boxcox_go, equal_var=False, alternative="l
 # -----------------------
 # Print results
 # -----------------------
-print("===== Sample Means (Raw) =====")
+print("\n===== Sample Means (Raw) =====")
 print(
     f"Python mean size : {size_python.mean():.2f}, Python std size {size_python.std(ddof=1):.2f}"
 )

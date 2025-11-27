@@ -1,6 +1,6 @@
 import json
 import numpy as np
-from scipy.stats import boxcox, ttest_ind, boxcox_normmax
+from scipy.stats import boxcox, ttest_ind, boxcox_normmax, shapiro
 
 # -----------------------
 # Load datasets
@@ -16,6 +16,16 @@ with open("Data/sampled_repo_go.json") as f:
 stars_python = np.array([d.get("stargazers_count", 0) for d in python_data])
 stars_java = np.array([d.get("stargazers_count", 0) for d in java_data])
 stars_go = np.array([d.get("stargazers_count", 0) for d in go_data])
+
+# Check if data is normally distributed with the Shapiro-Wilk test
+print("===== Shapiro-Wills test =====")
+res_python = shapiro(stars_python)
+res_java = shapiro(stars_java)
+res_go = shapiro(stars_go)
+
+print(f"Shapiro-Wilk test results (python): {res_python.statistic:.4f}, p-value: {res_python.pvalue:.4f}")
+print(f"Shapiro-Wilk test results (java): {res_java.statistic:.4f}, p-value: {res_java.pvalue:.4f}")
+print(f"Shapiro-Wilk test results (go): {res_go.statistic:.4f}, p-value: {res_go.pvalue:.4f}")
 
 # -----------------------
 # Shift by 1 to handle zeros
