@@ -1,7 +1,7 @@
 import json
 import sys
 import numpy as np
-from scipy.stats import boxcox, ttest_ind, boxcox_normmax, shapiro
+from scipy.stats import boxcox, ttest_ind, boxcox_normmax, anderson
 
 # -----------------------
 # Load datasets
@@ -18,19 +18,25 @@ size_python = np.array([d.get("size", 0) for d in python_data])
 size_java = np.array([d.get("size", 0) for d in java_data])
 size_go = np.array([d.get("size", 0) for d in go_data])
 
-if len(size_python)!=500 or len(size_java)!=500 or len(size_go)!=500:
+if len(size_python) != 500 or len(size_java) != 500 or len(size_go) != 500:
     print("number of samples is not 500")
     sys.exit(0)
 
-# Check if data is normally distributed with the Shapiro-Wilk test
-print("===== Shapiro-Wills test =====")
-res_python = shapiro(size_python)
-res_java = shapiro(size_java)
-res_go = shapiro(size_go)
+# Check if data is normally distributed with the Anderson-Darling test
+print("===== Anderson-Darling test =====")
+res_python = anderson(size_python)
+res_java = anderson(size_java)
+res_go = anderson(size_go)
 
-print(f"Shapiro-Wilk test results (python): {res_python.statistic:.4f}, p-value: {res_python.pvalue:.6f}")
-print(f"Shapiro-Wilk test results (java): {res_java.statistic:.4f}, p-value: {res_java.pvalue:.6f}")
-print(f"Shapiro-Wilk test results (go): {res_go.statistic:.4f}, p-value: {res_go.pvalue:.6f}")
+print(
+    f"Anderson-Darling test results (python): {res_python.statistic:.4f}, critical value for significance level of {res_python.significance_level[2]}% : {res_python.critical_values[2]:.6f}"
+)
+print(
+    f"Anderson-Darling test results (java): {res_java.statistic:.4f}, critical value for significance level of {res_java.significance_level[2]}% : {res_java.critical_values[2]:.6f}"
+)
+print(
+    f"Anderson-Darling test results (go): {res_go.statistic:.4f}, critical value for significance level of {res_go.significance_level[2]}% : {res_go.critical_values[2]:.6f}"
+)
 
 # -----------------------
 # Shift by 1 to handle zeros
