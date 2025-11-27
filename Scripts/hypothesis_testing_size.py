@@ -28,9 +28,9 @@ res_python = shapiro(size_python)
 res_java = shapiro(size_java)
 res_go = shapiro(size_go)
 
-print(f"Shapiro-Wilk test results (python): {res_python.statistic:.4f}, p-value: {res_python.pvalue:.4f}")
-print(f"Shapiro-Wilk test results (java): {res_java.statistic:.4f}, p-value: {res_java.pvalue:.4f}")
-print(f"Shapiro-Wilk test results (go): {res_go.statistic:.4f}, p-value: {res_go.pvalue:.4f}")
+print(f"Shapiro-Wilk test results (python): {res_python.statistic:.4f}, p-value: {res_python.pvalue:.6f}")
+print(f"Shapiro-Wilk test results (java): {res_java.statistic:.4f}, p-value: {res_java.pvalue:.6f}")
+print(f"Shapiro-Wilk test results (go): {res_go.statistic:.4f}, p-value: {res_go.pvalue:.6f}")
 
 # -----------------------
 # Shift by 1 to handle zeros
