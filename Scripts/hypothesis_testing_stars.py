@@ -57,7 +57,7 @@ t_go, p_go = ttest_ind(boxcox_python, boxcox_go, equal_var=False, alternative="l
 # -----------------------
 # Print results
 # -----------------------
-print("===== Sample Means (Raw) =====")
+print("\n===== Sample Means (Raw) =====")
 print(
     f"Python mean stars : {stars_python.mean():.2f}, Python std stars {stars_python.std(ddof=1):.2f}"
 )
