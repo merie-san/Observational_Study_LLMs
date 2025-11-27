@@ -413,11 +413,23 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\item $H_1$ --- Alternative Hypothesis\\
 		The mean number of stars in Python LLM Repositories is less than the mean number of stars in Golang LLM Repositories.
 	\end{itemize}
-	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Box-Cox transformation after shifting the number of stars by one to avoid zeros. The Box-Cox transformation is needed to stabilize variance and make the distribution more Gaussian and suitable for t-tests, transforming power law like distributions (e.g., the number of stars in GitHub repositories \autocite{lima2014codingscalegithubcollaborative}) into more normal shapes. We then apply Welch's t-test (one-tailed) to compute the t-statistics and the p-value for both Hypothesis tests assuming a significance level of $\alpha=0.05$. One sided tests are reasonable here because we suppose that the number of stars is lower in python LLM projects.
-	
+	We randomly sampled 500 repositories for all three languages and took record of the star number, and the size for each repository, then we use the Anderson-Darling Test to evaluate if the size and stars data of the repositories are normally distributed. This is a fundamental phase because it will determine if we need to normalize the data to obtain an accurate statistical analysis. 
+	The results, visible in Figures [n. delle figure], brings us to reject ne \textit{null hypotesis} since the $A^{2}$ values are far greater than the Significance Level choosen. And so there's the need to apply a normalization function to the data.
 	\pagebreak
 	
-	Sample statistics before Box-Cox:
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/anderson_darling_size_test.png}
+		\caption{Results for the Anderson-Darling test for the size data.}
+		\label{fig:anderson_size}
+	\end{figure}
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/anderson_darling_stars_test.png}
+		\caption{Results for the Anderson-Darling test for the stars data.}
+		\label{fig:anderson_stars}
+	\end{figure}
+	
+	We choose the Box-Cox transformation after shifting the number of stars by one to avoid zeros, to normalize the data, to stabilize variance and make the distribution more Gaussian and suitable for t-tests, transforming the power law like distributions into more normal shapes. We then apply Welch's t-test (one-tailed) to compute the t-statistics and the p-value for both Hypothesis tests assuming a significance level of $\alpha=0.05$. One sided tests are reasonable here because we suppose that the number of stars is lower in python LLM projects.
+	Sample statistics before Box-Cox
 	\begin{itemize}
 		\item $\overline{X}_{Python}=18.99$
 		\item $S^2_{Python}=270.93^2$
