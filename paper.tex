@@ -92,15 +92,15 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	
 	The list of available models for each maker was obtained by visiting the official site and combining results there with the return of a query to the API of the maker when the call was free.
 	
-	To reach our goal, we first analyzed for each language the evolution of the percentage of repositories containing LLM-adjacent words in their topic, description, or title. From the data we collected, we performed several analyses, such as which language is the most popular for the development of LLM-integrated applications or which repository metrics are more correlated. Starting from this analysis, we conducted a deeper research on public repositories on GitHub by using code search to retrieve all instances of relevant SDK import or model reference. The collected data is combined to obtain SDK-model pairs that can be analyzed and used to derive insights for our study. We then sampled a set of representative repositories from this exhaustive list to apply statistical methods and infer properties of the sampled population.\\
+	To reach our goal, we first analyzed for each language the evolution of the percentage of repositories containing LLM-adjacent words in their topic, description, or title. From the data we collected, we performed several analyses, such as which language is the most popular for the development of LLM-integrated applications or which repository metrics are more correlated. Starting from this analysis, we conducted a deeper research on public GitHub repositories by using code search to retrieve all instances of relevant SDK import or model reference. The collected data is combined to obtain SDK-model pairs that can be analyzed and used to derive insights for our study. We then sampled a set of representative repositories from this exhaustive list to apply statistical methods and infer properties of the sampled population.\\
 	Our empirical analysis leads to several key findings:
 	\begin{itemize}
-		\item \textbf{Rapid growth of LLM-related projects}, since the introduction of LLMs to public usage in 2022 the proportion of LLM-related repositories among the most-starred projects increased significantly across all languages, with \textit{Python} showing the steepest rise, from a 30\% to a stable 80\% reached in 2023. The other languages also follow a similar upward trend but not as steep.
+		\item \textbf{Rapid growth of LLM-related projects}, since the introduction of LLMs to public usage in 2022 the proportion of LLM-related repositories among the most-starred projects increased significantly across all languages, with \textit{Python} showing the steepest rise, from a 30\% to a stable 80\% reached in 2023 (Figure \textbf{\ref{fig:python_monthly}}) . The other languages also follow a similar upward trend but not as steep.
 		\item \textbf{Python's dominance over LLM-integrated development}, \textit{Python} accounts for over 260,000 repositories, compared to 8,639 for \textit{Java} and 5,511 for \textit{Go} in our combined dataset, making it two orders of magnitude more widely used for LLM applications.
-		\item \textbf{OpenAI and Google SDKs are the most adopted among official libraries}, although third-party libraries remain popular across all languages. For \textit{Python}, official SDKs show much stronger adoption than in \textit{Java} and \textit{Go}, where third-party libraries remains the most utilized.
-		\item \textbf{A small set of LLM models accounts for most real-world usage}, Across languages, the top 20\% most-frequent models constitute over 80\% of model references, with \textit{OpenAI} models dominating and \textit{Google} models appearing as secondary but significant contributors.
-		\item \textbf{Common usage patterns align with conversational, generative, and agentic workflows}, Based on keyword-based classification, LLMs in public repositories are primarily used for conversational agents, content generation, and multi-step agentic orchestration, with fewer repositories employing retrieval-augmented pipelines or domain-specific applications.
-		\item \textbf{Repository-level attributes show interesting correlations}, Spearman correlation analyses reveal distinct patterns across languages. In \textit{Python}, open issues correlate strongly with fork counts, while in \textit{Java} and \textbf{Go} stars correlate more with open issues. Statistical hypothesis testing further shows that \textit{Python} LLM repositories have significantly fewer stars on average than \textit{Java} and \textit{Go} repositories (p < 0.05 in both one-tailed Welch t-tests), suggesting lower visibility or more experimental project character.
+		\item \textbf{OpenAI and Google SDKs are the most adopted among official libraries}, although third-party libraries remain popular across all languages. For \textit{Python} (Figure \textbf{\ref{fig:python_library}}), official SDKs show much stronger adoption than in \textit{Java} (\textbf{Figure \ref{fig:java_library}}) and \textit{Go} (Figure \textbf{\ref{fig:go_library}}), where third-party libraries remains the most utilized.
+		\item \textbf{A small set of LLM models accounts for most real-world usage}, Across languages, the top 20\% most-frequent models constitute over 80\% of model references, with \textit{OpenAI} models dominating and \textit{Google} models appearing as secondary but significant contributors (Figures \textbf{\ref{fig:python_model} \ref{fig:java_model} \ref{fig:go_model}}).
+		\item \textbf{Common usage patterns align with conversational, generative, and agentic workflows}, Based on keyword-based classification, LLMs in public repositories are primarily used for conversational agents, content generation, and multi-step agentic orchestration, with fewer repositories employing retrieval-augmented pipelines or domain-specific applications (Figures \textbf{\ref{fig:python_cat_prop} \ref{fig:java_cat_prop} \ref{fig:go_cat_prop}}).
+		\item \textbf{Repository-level attributes show interesting correlations}, Spearman correlation analyses reveal distinct patterns across languages. In \textit{Python}, open issues correlate strongly with fork counts (Figure \textbf{\ref{fig:python_corr}}), while in \textit{Java} and \textbf{Go} stars correlate more with open issues (Figures \textbf{\ref{fig:java_corr} \ref{fig:go_corr}}). Statistical hypothesis testing further shows that \textit{Python} LLM repositories have significantly fewer stars on average than \textit{Java} and \textit{Go} repositories (p < 0.05 in both one-tailed Welch t-tests), suggesting lower visibility or more experimental project character.
 	\end{itemize}
 	
 	These findings paint a clear picture of the current LLM ecosystem where \textit{Python} is the central hub of LLM-integrated development, \textit{OpenAI} remains the dominant provider, and real-world usage tends to use a relatively narrow set of models and application patterns.
@@ -227,13 +227,13 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	In this section of the report, we show the results of our study and our answer to each of the initial questions concerning the real-world adoption and usage of LLM technology. 
 	
 	\subsection{Popularity over time}
-	We respond to this question by analyzing the results collected from Keyword-Search. We analyzed in total five languages: \textit{Python}, \textit{Java}, \textit{C\#}, \textit{JavaScript} and \textit{Go}. We analyzed the name, the description, and the topics for each repository and classified a repository as LLM-related if it contained at least a word from our list of keywords. We then just show the proportion of LLM-related projects grouped by the month of creation of the project. Here are the resulting graphs:
+	We respond to this question by analyzing the results collected from Keyword-Search. We analyzed in total five languages: \textit{Python}, \textit{Java}, \textit{C\#}, \textit{JavaScript} and \textit{Go}. We analyzed the name, the description, and the topics for each repository and classified a repository as LLM-related if it contained at least a word from our list of keywords. We then just show the proportion of LLM-related projects grouped by the month of creation of the project.
 	\begin{figure}[!h]
 		\includegraphics[width=1\linewidth]{Figures/python\_llm\_fraction.png}
 		\caption{monthly proportion of Public Python projects with LLM-related terms in their description, name or topics}
 		\label{fig:python_monthly}
 	\end{figure}
-	In this first graph we can observe that the proportion of LLM-related terms in the most starred public GitHub Python projects, started from a level of 30\% in 2022 and increased until a stable 80\% in the first half of 2023. We can see that a majority of the most popular new Python projects were about AI and LLMs in the last three years.
+	In Figure \textbf{\ref{fig:python_monthly}} we can observe that the proportion of LLM-related terms in the most starred public GitHub Python projects, started from a level of 30\% in 2022 and increased until a stable 80\% in the first half of 2023. We can see that a majority of the most popular new Python projects were about AI and LLMs in the last three years.
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/java\_llm\_fraction.png}
 		\caption{monthly proportion of Public Java projects with LLM-related terms in their description, name or topics}
@@ -246,7 +246,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:csharp_monthly}
 	\end{figure}
 
-	For Java and C\# we observe a lower incidence of LLM-related terms appearing in the most starred recent projects, however we can still see an evident increase in popularity in the last two years.
+	For Java, in Figure \textbf{\ref{fig:java_monthly}}, we observe a lower incidence of LLM-related terms appearing in the most starred recent projects, however we can still see an evident increase in popularity in the last two years.
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/go\_llm\_fraction.png}
 		\caption{monthly proportion of Public Go projects with LLM-related terms in their description, name or topics}
@@ -258,7 +258,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\caption{monthly proportion of Public Javascript projects with LLM-related terms in their description, name or topics}
 		\label{fig:javascript_monthly}
 	\end{figure}
-	For Golang and Javascript GitHub projects we see higher proportions of LLM-related projects and a similar peak in the may of 2025.
+	For Golang and Javascript GitHub projects, Figures \textbf{\ref{fig:go_monthly}} and \textbf{\ref{fig:javascript_monthly}}, we see higher proportions of LLM-related projects and a similar peak in the may of 2025.
 	
 	\subsection{Popular programming languages}
 	To respond to this question we just compare the number of repositories we collected for each language in Model-Search and Library-Search. 
@@ -270,7 +270,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	From the collected data we can see that Python is two order of magnitude more used for LLM-integrated application development than the other two analyzed languages.
 	
 	\subsection{Popular SDKs}
-	Each of the selected provider of LLM technology offers its own SDK to interface smoothly with its services. Like what we have already said in the experiment design section, official SDKs exist only for the most popular languages. We have built three graphs, one for each of the three languages we collected data for. Each graph will show the number of repositories that were found with the specific import statement that links it to the corresponding official SDK. Lastly, if a model reference was fopund in a repository with no known import pattern then the repository will be linked to 'other', in other words to a third party SDK.
+	Each of the selected provider of LLM technology offers its own SDK to interface smoothly with its services. Like what we have already said in the experiment design section, official SDKs exist only for the most popular languages. We have built three graphs, one for each of the three languages we collected data for (Figures \textbf{\ref{fig:python_library}}, \textbf{\ref{fig:java_library}}, \textbf{\ref{fig:go_library}}). Each graph will show the number of repositories that were found with the specific import statement that links it to the corresponding official SDK. Lastly, if a model reference was fopund in a repository with no known import pattern then the repository will be linked to 'other', in other words to a third party SDK.
 	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/llm\_library\_usage\_python.png}
@@ -293,11 +293,11 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:go_library}
 	\end{figure}
 	
-	These three graphs allow us to conclude that third-party library remain very popular in all the languages, while among official SDKs, OpenAI and Google remain dominant, with xAI being the less used given that it does not have free models.
+	These three graphs allow us to conclude that third-party library remain very popular in all the languages, while among official SDKs, \textit{OpenAI} and \textit{Google} remain dominant, with \textit{xAI} being the less used given that it does not have free models.
 	
 	
 	\subsection{Popular LLM models}
-	Using the list of all models we derived previously with the list-model functionality for each provider, we count the number of references for each model in our dataset. In all three languages we see the trend of the 20\% top most used models making up more than 80\% of total model usage, suggesting that most developer use the most accessible and/or popular model.
+	Using the list of all models we derived previously with the list-model functionality for each provider, we count the number of references for each model in our dataset. In all three languages we see the trend of the 20\% top most used models making up more than 80\% of total model usage, suggesting that most developer use the most accessible and/or popular model (Figures \textbf{\ref{fig:python_model}}, \textbf{\ref{fig:java_model}}, \textbf{\ref{fig:go_model}}).
 	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/llm\_model\_usage\_python.png}
@@ -317,7 +317,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:go_model}
 	\end{figure}
 	
-	In particular, for the twenty most referenced models, we conducted a deeper analysis to examine which libraries they were used in association with. Our method does not, in fact, guarantee that if an import statement for a library and a reference to a model appear in the same repository, or even in the same file, the model is actually used through that library. It only underlines association. Now we can show the graphs we made to show the association of various models with the five official SDKs we are considering.
+	In particular, for the twenty most referenced models, we conducted a deeper analysis to examine which libraries they were used in association with. Our method does not, in fact, guarantee that if an import statement for a library and a reference to a model appear in the same repository, or even in the same file, the model is actually used through that library. It only underlines association. Now we can show the graphs we made to show the association of various models with the five official SDKs we are considering (Figures \textbf{\ref{fig:python_model_prop}}, \textbf{\ref{fig:java_model_prop}}, \textbf{\ref{fig:go_model_prop}}).
 	
 	
 	\begin{figure}[h!]
@@ -341,17 +341,17 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:go_model_prop}
 	\end{figure}
 	
-	We see that our script was not able to associate most model references to a known official SDK in Java and Go, but was able to do so for the Python dataset. This may be caused by the higher popularity of official SDKs in Python and the higher popularity of Python itself for LLM-integrated software development. The most popular models do not change much between languages and are mostly dominated by OpenAI models with the occasional Google model. We can also observe that in correspondence of Google models we can see a significant proportion of association with the Gemini SDK, confirming the correctness of our method.
+	We see that our script was not able to associate most model references to a known official SDK in \textit{Java} and \textit{Go}, but was able to do so for the \textit{Python} dataset. This may be caused by the higher popularity of official SDKs in Python and the higher popularity of \textit{Python} itself for LLM-integrated software development. The most popular models do not change much between languages and are mostly dominated by \textit{OpenAI} models with the occasional \textit{Google} model. We can also observe that in correspondence of \textit{Google} models we can see a significant proportion of association with the \textit{Gemini} SDK, confirming the correctness of our method.
 	
 	\subsection{Usage patterns of LLMs}
 	Let us first discuss the classification method we decided to settle on:
 	\begin{enumerate}
-		\item Conversational Agents --- Used for direct human-LLM interaction in dialog form (e.g., chatbots, virtual assistants, helpdesk systems).
-		\item Generation Agents --- Used to produce text, code, or other content using LLMs (e.g., article writing, code completion, story generation).
-		\item Retrieval-Augmented --- Uses external knowledge sources to enhance LLM outputs and improve correctness (e.g., document question answering, knowledge-base assisted generation).
-		\item Agentic Orchestration --- Used when the LLM drives multi-step actions, calls APIs, or interacts with other software components (e.g., workflow automation, multi-step task agents, Auto-GPT style agents).
-		\item Multimodal --- Handles multiple data types, such as text, images, audio, and video (e.g., image captioning, audio transcription, video summarization).
-		\item Domain-Specific --- Tailored LLM applications designed for a particular field or domain (e.g., legal AI assistants, medical Q\&A systems, financial analysis tools).
+		\item \textbf{Conversational Agents} --- Used for direct human-LLM interaction in dialog form (e.g., chatbots, virtual assistants, helpdesk systems).
+		\item \textbf{Generation Agents} --- Used to produce text, code, or other content using LLMs (e.g., article writing, code completion, story generation).
+		\item \textbf{Retrieval-Augmented} --- Uses external knowledge sources to enhance LLM outputs and improve correctness (e.g., document question answering, knowledge-base assisted generation).
+		\item \textbf{Agentic Orchestration} --- Used when the LLM drives multi-step actions, calls APIs, or interacts with other software components (e.g., workflow automation, multi-step task agents, Auto-GPT style agents).
+		\item \textbf{Multimodal} --- Handles multiple data types, such as text, images, audio, and video (e.g., image captioning, audio transcription, video summarization).
+		\item \textbf{Domain-Specific} --- Tailored LLM applications designed for a particular field or domain (e.g., legal AI assistants, medical Q\&A systems, financial analysis tools).
 	\end{enumerate}
 	We based our classification method by matching the description, topics and name of the repository against a list of probable keywords for each category. This keyword matching method is not very efficient and leaves a lot of the repositories unclassified. Nevertheless we think that this method is a reliable way to classify the repositories based on purpose.
 	
@@ -375,7 +375,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	\raggedbottom
 	\pagebreak
 	
-	We can observe from the bar charts we built that between the classified repositories most llm are used as conversational agents, for generation tasks or for agentic orchestration.
+	We can observe from the bar charts (Figures \textbf{\ref{fig:python_cat_prop}}, \textbf{\ref{fig:java_cat_prop}}, \textbf{\ref{fig:go_cat_prop}}) we built that between the classified repositories most llm are used as conversational agents, for generation tasks or for agentic orchestration.
 	
 	\subsection{Repository attribute patterns}
 	Lastly, we try to statistically analyze the attributes of an average LLM-integrated software on GitHub. Let us start by checking how correlated are the numeric attributes of the LLM-using GitHub repositories by computing the Spearman's rho for each pair.
@@ -398,38 +398,24 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:java_corr}
 	\end{figure}
 	
-	The Spearman's correlation matrices for the Java and Golang datasets are very similar with each-other, while the one built from the Python dataset is quite different. The biggest observable difference is that for python projects the number of open issues correlates the most with the network count (number of forks) while in the other two languages it correlates the most with the number of stars of a project. This suggests that Python LLM projects are less visible, with activity driven by contributor engagement rather than popularity. This may be due to Python’s low barrier to entry, leading to many experimental projects with few stars. Let us Hypothesis test this.\\
+	The Spearman's correlation matrices for the \textit{Java} and \textit{Go} datasets are very similar with each-other (Figures \textbf{\ref{fig:java_corr}}, \textbf{\ref{fig:go_corr}}), while the one built from the \textit{Python} dataset is quite different (Figure \textbf{\ref{fig:python_corr}}). The biggest observable difference is that for \textit{Python} projects the number of open issues correlates the most with the network count (number of forks) while in the other two languages it correlates the most with the number of stars of a project. This suggests that \textit{Python} LLM projects are less visible, with activity driven by contributor engagement rather than popularity. This may be due to \textit{Python}’s low barrier to entry, leading to many experimental projects with few stars. Let us Hypothesis test this.\\
 	First test (Python vs Java): 
 	\begin{itemize}
-		\item $H_0$ --- Null Hypothesis\\
-		The mean number of stars in Python LLM Repositories is equal to the mean number of stars in Java LLM Repositories.
-		\item $H_1$ --- Alternative Hypothesis\\
-		The mean number of stars in Python LLM Repositories is less than the mean number of stars in Java LLM Repositories.
+		\item $H_0$ --- \textbf{Null Hypothesis}\\
+		The mean number of stars in \textit{Python} LLM Repositories is equal to the mean number of stars in \textit{Java} LLM Repositories.
+		\item $H_1$ --- \textbf{Alternative Hypothesis}\\
+		The mean number of stars in \textit{Python} LLM Repositories is less than the mean number of stars in \textit{Java} LLM Repositories.
 	\end{itemize}
-	Second test (Python vs Golang): 
+	Second test (\textit{Python} vs \textit{Go}): 
 	\begin{itemize}
-		\item $H_0$ --- Null Hypothesis\\
-		The mean number of stars in Python LLM Repositories is equal to the mean number of stars in Golang LLM Repositories.
-		\item $H_1$ --- Alternative Hypothesis\\
-		The mean number of stars in Python LLM Repositories is less than the mean number of stars in Golang LLM Repositories.
+		\item $H_0$ --- \textbf{Null Hypothesis}\\
+		The mean number of stars in \textit{Python} LLM Repositories is equal to the mean number of stars in \textit{Go} LLM Repositories.
+		\item $H_1$ --- \textbf{Alternative Hypothesis}\\
+		The mean number of stars in \textit{Python} LLM Repositories is less than the mean number of stars in \textit{Go} LLM Repositories.
 	\end{itemize}
-	We randomly sampled 500 repositories for all three languages and took record of the star number, and the size for each repository, then we use the Anderson-Darling Test to evaluate if the size and stars data of the repositories are normally distributed. This is a fundamental phase because it will determine if we need to normalize the data to obtain an accurate statistical analysis. 
-	The results, visible in Figures [n. delle figure], brings us to reject ne \textit{null hypotesis} since the $A^{2}$ values are far greater than the Significance Level choosen. And so there's the need to apply a normalization function to the data.
-	\pagebreak
+	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Box-Cox transformation after shifting the number of stars by one to avoid zeros. The Box-Cox transformation is needed to stabilize variance and make the distribution more Gaussian and suitable for t-tests, transforming power law like distributions (e.g., the number of stars in GitHub repositories \autocite{lima2014codingscalegithubcollaborative}) into more normal shapes. We then apply Welch's t-test (one-tailed) to compute the t-statistics and the p-value for both Hypothesis tests assuming a significance level of $\alpha=0.05$. One sided tests are reasonable here because we suppose that the number of stars is lower in \textit{Python} LLM projects.\\
 	
-	\begin{figure}[h!]
-		\includegraphics[width=1\linewidth]{Figures/anderson_darling_size_test.png}
-		\caption{Results for the Anderson-Darling test for the size data.}
-		\label{fig:anderson_size}
-	\end{figure}
-	\begin{figure}[h!]
-		\includegraphics[width=1\linewidth]{Figures/anderson_darling_stars_test.png}
-		\caption{Results for the Anderson-Darling test for the stars data.}
-		\label{fig:anderson_stars}
-	\end{figure}
-	
-	We choose the Box-Cox transformation after shifting the number of stars by one to avoid zeros, to normalize the data, to stabilize variance and make the distribution more Gaussian and suitable for t-tests, transforming the power law like distributions into more normal shapes. We then apply Welch's t-test (one-tailed) to compute the t-statistics and the p-value for both Hypothesis tests assuming a significance level of $\alpha=0.05$. One sided tests are reasonable here because we suppose that the number of stars is lower in python LLM projects.
-	Sample statistics before Box-Cox
+	Sample statistics before Box-Cox:
 	\begin{itemize}
 		\item $\overline{X}_{Python}=18.99$
 		\item $S^2_{Python}=270.93^2$
@@ -463,7 +449,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		$t=-8.5982$\\
 		$p=0.000000$
 	\end{itemize}
-	Both values are lower than the significance level $\alpha=0.05$ leading us to reject the null hypotheses $H_0$ for both comparisons. In other words, there is enough evidence to support that the mean number of stars for Python LLM projects are lower than those of Java and Golang LLM projects. Thus, Python LLM repositories have significantly fewer stars, supporting the observation of lower visibility compared to Java and Golang projects. A natural thing we can derive is that since Python repositories are generally less visible and more experimental, their size may be smaller than their corresponding Java and Golang projects. The paper \autocite{zhang2009distributionprogramsizesimplications} supports a log-normal distribution of program sizes so we can use the same procedure we applied for the number of stars.
+	Both values are lower than the significance level $\alpha=0.05$ leading us to reject the null hypotheses $H_0$ for both comparisons. In other words, there is enough evidence to support that the mean number of stars for \textit{Python} LLM projects are lower than those of \textit{Java} and \textit{Go} LLM projects. Thus, \textit{Python} LLM repositories have significantly fewer stars, supporting the observation of lower visibility compared to \textit{Java} and \textit{Go} projects. A natural thing we can derive is that since \textit{Python} repositories are generally less visible and more experimental, their size may be smaller than their corresponding \textit{Java} and \textit{Go} projects. The paper \autocite{zhang2009distributionprogramsizesimplications} supports a log-normal distribution of program sizes so we can use the same procedure we applied for the number of stars.
 	First size test (Python vs Java):
 	\begin{itemize}
 		\item $H_0$ --- Null Hypothesis\\
@@ -511,7 +497,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		$t=-2.0314$\\
 		$p=0.021239$
 	\end{itemize}
-	The statistical tests once again supports our reasoning. These findings support the hypothesis that Python LLM projects tend to be less prominent and smaller in scope. However, identifying the underlying causes—such as ecosystem norms, project maturity, or contributor profiles—requires further analysis.
+	The statistical tests once again supports our reasoning. These findings support the hypothesis that Python LLM projects tend to be less prominent and smaller in scope. However, identifying the underlying causes, such as ecosystem norms, project maturity, or contributor profiles, requires further analysis.
 	
 	%------------------------------------------------
 	
@@ -520,7 +506,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	\begin{itemize}
 		\item External Validity:
 		\begin{itemize}
-			\item Our analysis focuses exclusively on public GitHub repositories and three programming languages: Python, Java, and Go.
+			\item Our analysis focuses exclusively on public GitHub repositories and three programming languages: \textit{Python}, \textit{Java}, and \textit{Go}.
 			\item Projects in private repositories or written in other languages may exhibit different patterns of LLM usage, limiting generalizability.
 			\item Additionally, we only consider LLMs with official SDKs from six providers; thus, findings may not generalize to niche or proprietary LLMs.
 		\end{itemize}
@@ -543,9 +529,9 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	\end{itemize}
 	\pagebreak
 	\section{Discussion}
-	Our results provide several insights into the real-world adoption of LLMs in GitHub repositories. Python dominates LLM-integrated development, with two orders of magnitude more repositories than Java or Go, while OpenAI SDK and models are the most widely adopted across all languages. Other SDKs like xAI have minimal presence, likely due to limited accessibility. The usage patterns are primarily Conversational, Generation, and Agentic Orchestration, reflecting common application scenarios like chatbots, content generation, and workflow automation. We lastly concluded, through statistical analysis, that Python repositories tend to have fewer stars and smaller size, suggesting many experimental or prototype projects, whereas Go and Java projects are larger and more visible.
+	Our results provide several insights into the real-world adoption of LLMs in GitHub repositories. \textit{Python} dominates LLM-integrated development, with two orders of magnitude more repositories than \textit{Java} or \textit{Go}, while \textit{OpenAI} SDK and models are the most widely adopted across all languages. Other SDKs like \textit{xAI} have minimal presence, likely due to limited accessibility. The usage patterns are primarily Conversational, Generation, and Agentic Orchestration, reflecting common application scenarios like chatbots, content generation, and workflow automation. We lastly concluded, through statistical analysis, that Python repositories tend to have fewer stars and smaller size, suggesting many experimental or prototype projects, whereas \textit{Go} and \textit{Java} projects are larger and more visible.
 	
-	Our research is useful for LLM-integrated software developers: it helps in selecting LLM models and SDKs with the largest community support. For example, using Python with OpenAI SDK maximizes compatibility and access to widely tested models. As for lessons learned wefound that SDK accessibility influences greatly the language choice, while keyword-based classification is effective for high-level categorization but could be improved with NLP-based semantic analysis for more accurate usage pattern identification.
+	Our research is useful for LLM-integrated software developers: it helps in selecting LLM models and SDKs with the largest community support. For example, using \textit{Python} with \textit{OpenAI} SDK maximizes compatibility and access to widely tested models. As for lessons learned wefound that SDK accessibility influences greatly the language choice, while keyword-based classification is effective for high-level categorization but could be improved with NLP-based semantic analysis for more accurate usage pattern identification.
 	
 	\section{Conclusions}
 	
@@ -553,8 +539,8 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	
 	\subsection{Main Contributions}
 	\begin{enumerate}
-		\item Quantified the evolution of LLM-integrated software popularity over 2022–2025, showing rapid adoption, especially in Python.
-		\item Identified the most popular SDKs (OpenAI, Google) and models, highlighting the 80/20 pattern where a few models dominate usage.
+		\item Quantified the evolution of LLM-integrated software popularity over 2022–2025, showing rapid adoption, especially in \textit{Python}.
+		\item Identified the most popular SDKs (\textit{OpenAI}, \textit{Google}) and models, highlighting the 80/20 pattern where a few models dominate usage.
 		\item Classified usage patterns across repositories, providing actionable insights for developers and researchers.
 		\item Conducted statistical analysis of repository attributes, revealing differences in visibility and project scale across languages.
 	\end{enumerate}
