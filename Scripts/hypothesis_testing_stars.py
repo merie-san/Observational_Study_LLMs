@@ -1,6 +1,6 @@
 import json
 import numpy as np
-from scipy.stats import boxcox, ttest_ind, boxcox_normmax, anderson
+from scipy.stats import anderson, mannwhitneyu
 
 # -----------------------
 # Load datasets
@@ -33,38 +33,19 @@ print(
     f"Anderson-Darling test results (go): {res_go.statistic:.4f}, critical value for significance level of {res_go.significance_level[2]}% : {res_go.critical_values[2]:.6f}"
 )
 
-
 # -----------------------
-# Shift by 1 to handle zeros
+# Mann–Whitney U tests (one-sided)
 # -----------------------
-stars_python_shifted = stars_python + 1
-stars_java_shifted = stars_java + 1
-stars_go_shifted = stars_go + 1
+# Python < Java  → alternative="less" means Python distribution is stochastically smaller
+u_java, p_java = mannwhitneyu(stars_python, stars_java, alternative="less")
 
-# Box-Cox transform
-boxcox_python, _ = boxcox(stars_python_shifted)  # type: ignore
-boxcox_java, _ = boxcox(stars_java_shifted)  # type: ignore
-boxcox_go, _ = boxcox(stars_go_shifted)  # type: ignore
-
-# Compute lambda for reporting
-lambda_python = boxcox_normmax(stars_python_shifted)
-lambda_java = boxcox_normmax(stars_java_shifted)
-lambda_go = boxcox_normmax(stars_go_shifted)
-
-# -----------------------
-# Welch two-sample t-tests (one-sided)
-# -----------------------
-# Python < Java
-t_java, p_java = ttest_ind(
-    boxcox_python, boxcox_java, equal_var=False, alternative="less"
-)
 # Python < Go
-t_go, p_go = ttest_ind(boxcox_python, boxcox_go, equal_var=False, alternative="less")
+u_go, p_go = mannwhitneyu(stars_python, stars_go, alternative="less")
 
 # -----------------------
 # Print results
 # -----------------------
-print("\n===== Sample Means (Raw) =====")
+print("\n===== Sample Means =====")
 print(
     f"Python mean stars : {stars_python.mean():.2f}, Python std stars {stars_python.std(ddof=1):.2f}"
 )
@@ -74,16 +55,12 @@ print(
 print(
     f"Go mean stars     : {stars_go.mean():.2f}, Go std stars {stars_go.std(ddof=1):.2f}"
 )
-print("\n===== Box-Cox Transformation =====")
-print(f"Python lambda    : {lambda_python:.4f}, mean: {boxcox_python.mean():.3f}, std: {boxcox_python.std(ddof=1):.3f}")  # type: ignore
-print(f"Java lambda      : {lambda_java:.4f}, mean: {boxcox_java.mean():.3f}, std: {boxcox_java.std(ddof=1):.3f}")  # type: ignore
-print(f"Go lambda        : {lambda_go:.4f}, mean: {boxcox_go.mean():.3f}, std: {boxcox_go.std(ddof=1):.3f}")  # type: ignore
 
-print("\n===== Welch Two-Sample Tests =====")
+print("\n===== Mann–Whitney U Tests =====")
 print("Python vs Java:")
-print(f"  t-statistic  : {t_java:.4f}")
+print(f"  U-statistic  : {u_java:.4f}")
 print(f"  p-value (one-sided, Python < Java): {p_java:.6f}")
 
 print("\nPython vs Go:")
-print(f"  t-statistic  : {t_go:.4f}")
+print(f"  U-statistic  : {u_go:.4f}")
 print(f"  p-value (one-sided, Python < Go): {p_go:.6f}")
