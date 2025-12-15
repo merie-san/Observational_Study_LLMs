@@ -402,58 +402,50 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	First test (Python vs Java): 
 	\begin{itemize}
 		\item $H_0$ --- \textbf{Null Hypothesis}\\
-		The mean number of stars in \textit{Python} LLM Repositories is equal to the mean number of stars in \textit{Java} LLM Repositories.
+		The number of stars in \textit{Python} LLM Repositories has the same distribution as the number of stars in \textit{Java} LLM Repositories.
 		\item $H_1$ --- \textbf{Alternative Hypothesis}\\
-		The mean number of stars in \textit{Python} LLM Repositories is less than the mean number of stars in \textit{Java} LLM Repositories.
+		The number of stars in \textit{Python} LLM Repositories is stochastically less than the number of stars in \textit{Java} LLM Repositories.
 	\end{itemize}
 	Second test (\textit{Python} vs \textit{Go}): 
 	\begin{itemize}
 		\item $H_0$ --- \textbf{Null Hypothesis}\\
-		The mean number of stars in \textit{Python} LLM Repositories is equal to the mean number of stars in \textit{Go} LLM Repositories.
+		The number of stars in \textit{Python} LLM Repositories has the same distribution as the number of stars in \textit{Go} LLM Repositories.
 		\item $H_1$ --- \textbf{Alternative Hypothesis}\\
-		The mean number of stars in \textit{Python} LLM Repositories is less than the mean number of stars in \textit{Go} LLM Repositories.
+		The number of stars in \textit{Python} LLM Repositories is stochastically less than the number of stars in \textit{Go} LLM Repositories.
 	\end{itemize}
-	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Box-Cox transformation after shifting the number of stars by one to avoid zeros. The Box-Cox transformation is needed to stabilize variance and make the distribution more Gaussian and suitable for t-tests, transforming power law like distributions (e.g., the number of stars in GitHub repositories \autocite{lima2014codingscalegithubcollaborative}) into more normal shapes. We then apply Welch's t-test (one-tailed) to compute the t-statistics and the p-value for both Hypothesis tests assuming a significance level of $\alpha=0.05$. One sided tests are reasonable here because we suppose that the number of stars is lower in \textit{Python} LLM projects.\\
+	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Anderson–Darling test to assess whether the repository size and star count data follow a normal distribution. This step is fundamental, as it determines the appropriate hypothesis testing method to use (parametric or non-parametric). The results visible in Figures \textbf{\ref{fig:anderson_size}} and \textbf{\ref{fig:anderson_stars}}, indicate that neither distribution is normally distributed. Consequently, we employed a non-parametric hypothesis testing method, specifically the Mann–Whitney U test.
 	
-	Sample statistics before Box-Cox:
-	\begin{itemize}
-		\item $\overline{X}_{Python}=18.99$
-		\item $S^2_{Python}=270.93^2$
-		\item $\overline{X}_{Java}=25.34$
-		\item $S^2_{Java}=179.75^2$
-		\item $\overline{X}_{Go}=188.41$
-		\item $S^2_{Go}=1986.66^2$
-	\end{itemize}
-	Sample statistics after Box-Cox:
-	\begin{itemize}
-		\item $\overline{X'}_{Python}=0.173$
-		\item $S'^2_{Python}=0.268^2$
-		\item $\overline{X'}_{Java}=0.245$
-		\item $S'^2_{Java}=0.352^2$
-		\item $\overline{X'}_{Go}=0.393$
-		\item $S'^2_{Go}=0.506^2$
-	\end{itemize}
-	Lambda parameter for Box-Cox transformation:
-	\begin{itemize}
-		\item $\lambda_{Python}=-0.7517$
-		\item $\lambda_{Java}=-0.6540$
-		\item $\lambda_{Go}=-0.4958$
-	\end{itemize}
-	For different values of lambda the Box-Cox transformation applies different operations on the dataset. When $\lambda=1$ then we have the original variable, when $\lambda=0$ , we have the logarithm transformation, when $\lambda=-1$  we have the reciprocal transformation, and when $\lambda=0.5$  we have the square root. Our $\lambda\approx–0.7$ indicates a transformation close to reciprocal-root behavior
-	T-statistic and p-value for the two Welch t-tests:
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/anderson_darling_size_test.png}
+		\caption{Results for the Anderson-Darling test for the size data.}
+		\label{fig:anderson_size}
+	\end{figure}
+	\begin{figure}[h!]
+		\includegraphics[width=1\linewidth]{Figures/anderson_darling_stars_test.png}
+		\caption{Results for the Anderson-Darling test for the stars data.}
+		\label{fig:anderson_stars}
+	\end{figure}
+
+	The Mann-Whitney U test is a non parametric test that tests whether the distributions underlying the two input samples are the same. In out specific case we apply the one-sided test checking that the distribution of star numbers in Python repositories are stochastically less than in other languages. Stochastically less meaning that x tend to be smaller than values from y in a distribution-wide sense. Formally X is stochastically less than Y means that:
+	$P(X>u)\le P(Y>u)$ \hspace*{0.2cm} $\forall u$.\\
+	The results were the following, considering a significance level of $\alpha=0.05$:
 	\begin{itemize}
 		\item Python vs Java ---\\
-		$t=-3.6139$\\
-		$p=0.000159$
+		$U-statistic=118646.5000$\\
+		$p-value=0.047242$\\
+		$p-value<\alpha$, we reject the null hypothesis.
 		\item Python vs Go ---\\
-		$t=-8.5982$\\
-		$p=0.000000$
+		$U-statistic=108120.0000$\\
+		$p-value= 0.000008$\\
+		$p-value<\alpha$, we reject the null hypothesis.
 	\end{itemize}
-	Both values are lower than the significance level $\alpha=0.05$ leading us to reject the null hypotheses $H_0$ for both comparisons. In other words, there is enough evidence to support that the mean number of stars for \textit{Python} LLM projects are lower than those of \textit{Java} and \textit{Go} LLM projects. Thus, \textit{Python} LLM repositories have significantly fewer stars, supporting the observation of lower visibility compared to \textit{Java} and \textit{Go} projects. A natural thing we can derive is that since \textit{Python} repositories are generally less visible and more experimental, their size may be smaller than their corresponding \textit{Java} and \textit{Go} projects. The paper \autocite{zhang2009distributionprogramsizesimplications} supports a log-normal distribution of program sizes so we can use the same procedure we applied for the number of stars.
+	Both p-values are lower than the significance level $\alpha=0.05$ leading us to reject the null hypotheses $H_0$ for both comparisons. In other words, there is enough evidence to support that the distribution of number of stars for \textit{Python} LLM projects are stochastically less than those of \textit{Java} and \textit{Go} LLM projects. Thus, \textit{Python} LLM repositories have statistically fewer stars, supporting the observation of lower visibility compared to \textit{Java} and \textit{Go} projects. A natural thing we can derive is that since \textit{Python} repositories are generally less visible and more experimental, their size may be smaller than their corresponding \textit{Java} and \textit{Go} projects. 
+	
+	The paper \autocite{zhang2009distributionprogramsizesimplications} supports a log-normal distribution of program sizes together with the Anderson-Darling tests we did earlier, so we can use the same procedure we applied for the number of stars.
 	First size test (Python vs Java):
 	\begin{itemize}
 		\item $H_0$ --- Null Hypothesis\\
-		The mean size of Python LLM Repositories is equal to the mean size of Java LLM Repositories.
+		The size of Python LLM Repositories has the same distribution Java LLM Repositories.
 		\item $H_1$ --- Alternative Hypothesis\\
 		The mean size of Python LLM Repositories is less than the mean size of Java LLM Repositories.
 	\end{itemize}
