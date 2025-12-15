@@ -413,22 +413,23 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\item $H_1$ --- \textbf{Alternative Hypothesis}\\
 		The number of stars in \textit{Python} LLM Repositories is stochastically less than the number of stars in \textit{Go} LLM Repositories.
 	\end{itemize}
-	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Anderson–Darling test to assess whether the repository size and star count data follow a normal distribution. This step is fundamental, as it determines the appropriate hypothesis testing method to use (parametric or non-parametric). The results visible in Figures \textbf{\ref{fig:anderson_size}} and \textbf{\ref{fig:anderson_stars}}, indicate that neither distribution is normally distributed. Consequently, we employed a non-parametric hypothesis testing method, specifically the Mann–Whitney U test.
+	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Anderson–Darling test to assess whether the repository size and star count data follow a normal distribution. This step is fundamental, as it determines the appropriate hypothesis testing method to use (parametric or non-parametric). The results visible in Figures \textbf{\ref{fig:anderson_size}} and \textbf{\ref{fig:anderson_stars}}, indicate that neither distribution is normally distributed. Consequently, we employed a non-parametric hypothesis testing method, specifically the Mann–Whitney U test. \pagebreak
 	
 	\begin{figure}[h!]
-		\includegraphics[width=1\linewidth]{Figures/anderson_darling_size_test.png}
+		\includegraphics[width=1\linewidth]{Figures/anderson\_darling\_size\_test.png}
 		\caption{Results for the Anderson-Darling test for the size data.}
 		\label{fig:anderson_size}
 	\end{figure}
 	\begin{figure}[h!]
-		\includegraphics[width=1\linewidth]{Figures/anderson_darling_stars_test.png}
+		\includegraphics[width=1\linewidth]{Figures/anderson\_darling\_stars\_test.png}
 		\caption{Results for the Anderson-Darling test for the stars data.}
 		\label{fig:anderson_stars}
 	\end{figure}
 
-	The Mann-Whitney U test is a non parametric test that tests whether the distributions underlying the two input samples are the same. In out specific case we apply the one-sided test checking that the distribution of star numbers in Python repositories are stochastically less than in other languages. Stochastically less meaning that x tend to be smaller than values from y in a distribution-wide sense. Formally X is stochastically less than Y means that:
-	$P(X>u)\le P(Y>u)$ \hspace*{0.2cm} $\forall u$.\\
-	The results were the following, considering a significance level of $\alpha=0.05$:
+	Basically, the Mann-Whitney U test checks whether the distributions underlying the two input samples are the same. In out specific case we apply the one-sided test checking that the distribution of star numbers in Python repositories are stochastically less than in the other two languages. Stochastically less means that values from X tend to be smaller than values from Y in a distribution-wide sense. Formally X is stochastically less than Y means that:
+	$P(X>u)\le P(Y>u)$ \hspace*{0.2cm} $\forall u$.
+	
+	The results of applying the test were the following, considering a significance level of $\alpha=0.05$:
 	\begin{itemize}
 		\item Python vs Java ---\\
 		$U-statistic=118646.5000$\\
@@ -445,49 +446,27 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	First size test (Python vs Java):
 	\begin{itemize}
 		\item $H_0$ --- Null Hypothesis\\
-		The size of Python LLM Repositories has the same distribution Java LLM Repositories.
+		The sizes of Python and Java LLM repositories have the same distribution.
 		\item $H_1$ --- Alternative Hypothesis\\
-		The mean size of Python LLM Repositories is less than the mean size of Java LLM Repositories.
+		The distribution of sizes in Python repositories are stochastically less than in Java repositories
 	\end{itemize}
 	Second size test (Python vs Golang): 
 	\begin{itemize}
 		\item $H_0$ --- Null Hypothesis\\
-		The mean size of Python LLM Repositories is equal to the mean size of Golang LLM Repositories.
+		The sizes of Python and Golang LLM repositories have the same distribution.
 		\item $H_1$ --- Alternative Hypothesis\\
-		The mean size of Python LLM Repositories is less than the mean size of Golang LLM Repositories.
+		The distribution of sizes in Python repositories are stochastically less than in Golang repositories
 	\end{itemize}
-	Sample statistics before Box-Cox:
-	\begin{itemize}
-		\item $\overline{X}_{Python}=24.19$
-		\item $S^2_{Python}=75.03^2$
-		\item $\overline{X}_{Java}=49.25$
-		\item $S^2_{Java}=356.95^2$
-		\item $\overline{X}_{Go}=31.98$
-		\item $S^2_{Go}=169.90^2$
-	\end{itemize}
-	Sample statistics after Box-Cox:
-	\begin{itemize}
-		\item $\overline{X'}_{Python}=0.643$
-		\item $S'^2_{Python}=0.648^2$
-		\item $\overline{X'}_{Java}=0.900$
-		\item $S'^2_{Java}=0.817^2$
-		\item $\overline{X'}_{Go}=0.728$
-		\item $S'^2_{Go}=0.678^2$
-	\end{itemize}
-	Lambda parameter for Box-Cox transformation:
-	\begin{itemize}
-		\item $\lambda_{Python}=-0.5846$
-		\item $\lambda_{Java}=-0.3503$
-		\item $\lambda_{Go}=-0.4997$
-	\end{itemize}
-	T-statistic and p-value for the two Welch t-tests:
+	U-statistic and p-value for the two Mann–Whitney U, considering a significance level of $\alpha=0.05$:
 	\begin{itemize}
 		\item Python vs Java ---\\
-		$t=-5.5173$\\
-		$p=0.000000$
+		$U-statistic=105600.0000$\\
+		$p-value=0.000011$\\
+		$p-value<\alpha$, we reject the null hypothesis.
 		\item Python vs Go ---\\
-		$t=-2.0314$\\
-		$p=0.021239$
+		$U-statistic=114880.0000$\\
+		$p-value=0.013346$\\
+		$p-value<\alpha$, we reject the null hypothesis.
 	\end{itemize}
 	The statistical tests once again supports our reasoning. These findings support the hypothesis that Python LLM projects tend to be less prominent and smaller in scope. However, identifying the underlying causes, such as ecosystem norms, project maturity, or contributor profiles, requires further analysis.
 	
@@ -519,7 +498,6 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 			\item Correlations observed between repository attributes are descriptive and do not imply causation.
 		\end{itemize}
 	\end{itemize}
-	\pagebreak
 	\section{Discussion}
 	Our results provide several insights into the real-world adoption of LLMs in GitHub repositories. \textit{Python} dominates LLM-integrated development, with two orders of magnitude more repositories than \textit{Java} or \textit{Go}, while \textit{OpenAI} SDK and models are the most widely adopted across all languages. Other SDKs like \textit{xAI} have minimal presence, likely due to limited accessibility. The usage patterns are primarily Conversational, Generation, and Agentic Orchestration, reflecting common application scenarios like chatbots, content generation, and workflow automation. We lastly concluded, through statistical analysis, that Python repositories tend to have fewer stars and smaller size, suggesting many experimental or prototype projects, whereas \textit{Go} and \textit{Java} projects are larger and more visible.
 	
