@@ -265,7 +265,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	From the collected data we can see that Python is two order of magnitude more used for LLM-integrated application development than the other two analyzed languages.
 	
 	\subsection{Popular SDKs}
-	Each of the selected provider of LLM technology offers its own SDK to interface smoothly with its services. Like what we have already said in the experiment design section, official SDKs exist only for the most popular languages. We have built three graphs, one for each of the three languages we collected data for (Figures \textbf{\ref{fig:python_library}}, \textbf{\ref{fig:java_library}}, \textbf{\ref{fig:go_library}}). Each graph will show the number of repositories that were found with the specific import statement that links it to the corresponding official SDK. Lastly, if a model reference was fopund in a repository with no known import pattern then the repository will be linked to 'other', in other words to a third party SDK.
+	Each of the selected provider of LLM technology offers its own SDK to interface smoothly with its services. Like what we have already said in the experiment design section, official SDKs exist only for the most popular languages. We have built three graphs, one for each of the three languages we collected data for (Figures \textbf{\ref{fig:python_library}}, \textbf{\ref{fig:java_library}}, \textbf{\ref{fig:go_library}}). Each graph will show the number of repositories that were found with the specific import statement that links it to the corresponding official SDK. Lastly, if a model reference was found in a repository with no known import pattern then the repository will be linked to 'other', in other words to a third party SDK.
 	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/llm\_library\_usage\_python.png}
@@ -347,7 +347,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\item \textbf{Multimodal} --- Handles multiple data types, such as text, images, audio, and video (e.g., image captioning, audio transcription, video summarization).
 		\item \textbf{Domain-Specific} --- Tailored LLM applications designed for a particular field or domain (e.g., legal AI assistants, medical Q\&A systems, financial analysis tools).
 	\end{enumerate}
-	We based our classification method by matching the description, topics and name of the repository against a list of probable keywords for each category. This keyword matching method is not very efficient and leaves a lot of the repositories unclassified. Nevertheless we think that this method is a reliable way to classify the repositories based on purpose.
+	We based our classification method by matching the description, topics and name of the repository against a list of probable keywords for each category. This keyword matching method is not very efficient and leaves a lot of the repositories unclassified.
 	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/python\_llm\_category\_proportions.png}
@@ -379,6 +379,9 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\caption{Spearman's Correlation Heatmap for Python}
 		\label{fig:python_corr}
 	\end{figure}
+	
+	\pagebreak
+	\raggedbottom
 	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/table\_corr\_go.png}
@@ -420,7 +423,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:anderson_stars}
 	\end{figure}
 
-	Basically, the Mann-Whitney U test checks whether the distributions underlying the two input samples are the same. In out specific case we apply the one-sided test checking that the distribution of star numbers in Python repositories are stochastically less than in the other two languages. Stochastically less means that values from X tend to be smaller than values from Y in a distribution-wide sense. Formally X is stochastically less than Y means that:
+	Basically, the Mann-Whitney U test checks whether the distributions underlying the two input samples are the same. In our specific case we apply the one-sided test to check whether the distribution of star numbers in Python repositories is stochastically less than compared to the other two languages. Stochastically less means that values from X tend to be smaller than values from Y in a distribution-wide sense. Formally X is stochastically less than Y means that:
 	$P(X>u)\le P(Y>u)$ \hspace*{0.2cm} $\forall u$.
 	
 	\raggedbottom
@@ -445,14 +448,14 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\item $H_0$ --- Null Hypothesis\\
 		The sizes of Python and Java LLM repositories have the same distribution.
 		\item $H_1$ --- Alternative Hypothesis\\
-		The distribution of sizes in Python repositories are stochastically less than in Java repositories
+		The distribution of sizes in Python repositories is stochastically less than in Java repositories
 	\end{itemize}
 	Second size test (Python vs Golang): 
 	\begin{itemize}
 		\item $H_0$ --- Null Hypothesis\\
 		The sizes of Python and Golang LLM repositories have the same distribution.
 		\item $H_1$ --- Alternative Hypothesis\\
-		The distribution of sizes in Python repositories are stochastically less than in Golang repositories
+		The distribution of sizes in Python repositories is stochastically less than in Golang repositories
 	\end{itemize}
 	U-statistic and p-value for the two Mann–Whitney U, considering a significance level of $\alpha=0.05$:
 	\begin{itemize}
