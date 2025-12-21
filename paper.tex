@@ -129,6 +129,8 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	
 	In summary, we did not find important papers detailing the popularity of various LLM technologies through API usage, but we did find foundational papers on LLM-integrated application development.
 	%------------------------------------------------
+	\pagebreak
+	\raggedbottom
 	
 	\section{Experiment Design And Execution}
 	
@@ -227,23 +229,21 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	In this section of the report, we show the results of our study and our answer to each of the initial questions concerning the real-world adoption and usage of LLM technology. 
 	
 	\subsection{Popularity over time}
-	We respond to this question by analyzing the results collected from Keyword-Search. We analyzed in total five languages: \textit{Python}, \textit{Java}, \textit{C\#}, \textit{JavaScript} and \textit{Go}. We analyzed the name, the description, and the topics for each repository and classified a repository as LLM-related if it contained at least a word from our list of keywords. We then just show the proportion of LLM-related projects grouped by the month of creation of the project.
+	We respond to this question by analyzing the results collected from Keyword-Search. We analyzed the name, the description, and the topics for each repository and classified a repository as LLM-related if it contained at least a word from our list of keywords. We then just show the proportion of LLM-related projects grouped by the month of creation of the project.
 	\begin{figure}[!h]
 		\includegraphics[width=1\linewidth]{Figures/python\_llm\_fraction.png}
 		\caption{monthly proportion of Public Python projects with LLM-related terms in their description, name or topics}
 		\label{fig:python_monthly}
 	\end{figure}
 	In Figure \textbf{\ref{fig:python_monthly}} we can observe that the proportion of LLM-related terms in the most starred public GitHub Python projects, started from a level of 30\% in 2022 and increased until a stable 80\% in the first half of 2023. We can see that a majority of the most popular new Python projects were about AI and LLMs in the last three years.
+	
+	\pagebreak
+	\raggedbottom
+	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/java\_llm\_fraction.png}
 		\caption{monthly proportion of Public Java projects with LLM-related terms in their description, name or topics}
 		\label{fig:java_monthly}
-	\end{figure}
-	
-	\begin{figure}[h!]
-		\includegraphics[width=1\linewidth]{Figures/csharp\_llm\_fraction.png}
-		\caption{monthly proportion of Public C\# projects with LLM-related terms in their description, name or topics}
-		\label{fig:csharp_monthly}
 	\end{figure}
 
 	For Java, in Figure \textbf{\ref{fig:java_monthly}}, we observe a lower incidence of LLM-related terms appearing in the most starred recent projects, however we can still see an evident increase in popularity in the last two years.
@@ -253,12 +253,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:go_monthly}
 	\end{figure}
 
-	\begin{figure}[h!]
-		\includegraphics[width=1\linewidth]{Figures/javascript\_llm\_fraction.png}
-		\caption{monthly proportion of Public Javascript projects with LLM-related terms in their description, name or topics}
-		\label{fig:javascript_monthly}
-	\end{figure}
-	For Golang and Javascript GitHub projects, Figures \textbf{\ref{fig:go_monthly}} and \textbf{\ref{fig:javascript_monthly}}, we see higher proportions of LLM-related projects and a similar peak in the may of 2025.
+	For Golang projects, Figures \textbf{\ref{fig:go_monthly}}, we see higher proportions of LLM-related projects and a similar peak in the may of 2025.
 	
 	\subsection{Popular programming languages}
 	To respond to this question we just compare the number of repositories we collected for each language in Model-Search and Library-Search. 
@@ -284,9 +279,6 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:java_library}
 	\end{figure}
 	
-	\raggedbottom
-	\pagebreak
-	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/llm\_library\_usage\_go.png}
 		\caption{Number of repositories found with code search with the imports of the relative SDK in Golang}
@@ -295,6 +287,8 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	
 	These three graphs allow us to conclude that third-party library remain very popular in all the languages, while among official SDKs, \textit{OpenAI} and \textit{Google} remain dominant, with \textit{xAI} being the less used given that it does not have free models.
 	
+	\raggedbottom
+	\pagebreak
 	
 	\subsection{Popular LLM models}
 	Using the list of all models we derived previously with the list-model functionality for each provider, we count the number of references for each model in our dataset. In all three languages we see the trend of the 20\% top most used models making up more than 80\% of total model usage, suggesting that most developer use the most accessible and/or popular model (Figures \textbf{\ref{fig:python_model}}, \textbf{\ref{fig:java_model}}, \textbf{\ref{fig:go_model}}).
@@ -332,9 +326,6 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\label{fig:java_model_prop}
 	\end{figure}
 	
-	\raggedbottom
-	\pagebreak
-	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/top\_models\_prop\_go.png}
 		\caption{Proportions of models found within the same file or repository of an import for Golang projects}
@@ -342,6 +333,9 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 	\end{figure}
 	
 	We see that our script was not able to associate most model references to a known official SDK in \textit{Java} and \textit{Go}, but was able to do so for the \textit{Python} dataset. This may be caused by the higher popularity of official SDKs in Python and the higher popularity of \textit{Python} itself for LLM-integrated software development. The most popular models do not change much between languages and are mostly dominated by \textit{OpenAI} models with the occasional \textit{Google} model. We can also observe that in correspondence of \textit{Google} models we can see a significant proportion of association with the \textit{Gemini} SDK, confirming the correctness of our method.
+	
+	\raggedbottom
+	\pagebreak
 	
 	\subsection{Usage patterns of LLMs}
 	Let us first discuss the classification method we decided to settle on:
@@ -413,7 +407,7 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\item $H_1$ --- \textbf{Alternative Hypothesis}\\
 		The number of stars in \textit{Python} LLM Repositories is stochastically less than the number of stars in \textit{Go} LLM Repositories.
 	\end{itemize}
-	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Anderson–Darling test to assess whether the repository size and star count data follow a normal distribution. This step is fundamental, as it determines the appropriate hypothesis testing method to use (parametric or non-parametric). The results visible in Figures \textbf{\ref{fig:anderson_size}} and \textbf{\ref{fig:anderson_stars}}, indicate that neither distribution is normally distributed. Consequently, we employed a non-parametric hypothesis testing method, specifically the Mann–Whitney U test. \pagebreak
+	We randomly sampled 500 repositories for all three languages and took record of the star number for each repository. We then applied the Anderson–Darling test to assess whether the repository size and star count data follow a normal distribution. This step is fundamental, as it determines the appropriate hypothesis testing method to use (parametric or non-parametric). The results visible in Figures \textbf{\ref{fig:anderson_size}} and \textbf{\ref{fig:anderson_stars}}, indicate that neither distribution is normally distributed. Consequently, we employed a non-parametric hypothesis testing method, specifically the Mann–Whitney U test.
 	
 	\begin{figure}[h!]
 		\includegraphics[width=1\linewidth]{Figures/anderson\_darling\_size\_test.png}
@@ -428,6 +422,9 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 
 	Basically, the Mann-Whitney U test checks whether the distributions underlying the two input samples are the same. In out specific case we apply the one-sided test checking that the distribution of star numbers in Python repositories are stochastically less than in the other two languages. Stochastically less means that values from X tend to be smaller than values from Y in a distribution-wide sense. Formally X is stochastically less than Y means that:
 	$P(X>u)\le P(Y>u)$ \hspace*{0.2cm} $\forall u$.
+	
+	\raggedbottom
+	\pagebreak
 	
 	The results of applying the test were the following, considering a significance level of $\alpha=0.05$:
 	\begin{itemize}
@@ -494,7 +491,6 @@ Our objective is to thoroughly analyze the usage and prominence of LLMs in GitHu
 		\item Conclusion Validity:
 		\begin{itemize}
 			\item Statistical analyses rely on random samples of 500 repositories for hypothesis tests, which are only sampled one time.
-			\item While Box-Cox transformations help normalize skewed data, extreme values in popularity or size could influence results.
 			\item Correlations observed between repository attributes are descriptive and do not imply causation.
 		\end{itemize}
 	\end{itemize}
